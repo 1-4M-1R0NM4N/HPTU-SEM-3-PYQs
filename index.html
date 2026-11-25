@@ -299,7 +299,7 @@
 
     </section>
 
-    <!-- Minimalist Action Buttons for Pareto's Principle & Derivations List -->
+    <!-- Action Button for Pareto's Principle -->
     <div class="mt-9 sm:mt-11 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
       <button
         id="btn-pareto"
@@ -313,22 +313,9 @@
         </svg>
         <span>Pareto's Principle</span>
       </button>
-
-      <button
-        id="btn-derivations"
-        type="button"
-        class="pill-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold cursor-pointer inline-flex items-center gap-2"
-        aria-expanded="false"
-        aria-controls="panel-derivations"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h10M4 17h13" />
-        </svg>
-        <span>Unit-Wise Derivations (311–314)</span>
-      </button>
     </div>
 
-    <!-- Expandable Section 1: Pareto's Principle (80/20 Topic Checklist) -->
+    <!-- Expandable Section: Pareto's Principle (80/20 Topic Checklist) -->
     <section id="panel-pareto" class="hidden w-full mt-7 panel-surface rounded-3xl p-5 sm:p-7" aria-label="Pareto's Principle Topic Checklist">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b" style="border-color: var(--border-card);">
         <div>
@@ -363,29 +350,6 @@
       <div id="pareto-list" class="space-y-2.5"></div>
     </section>
 
-    <!-- Expandable Section 2: Unit-Wise Derivations (ECEPC-311, 312, 313, 314) -->
-    <section id="panel-derivations" class="hidden w-full mt-7 panel-surface rounded-3xl p-5 sm:p-7" aria-label="Unit-Wise Derivations">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b" style="border-color: var(--border-card);">
-        <div>
-          <h2 class="font-display text-xl sm:text-2xl font-bold tracking-tight">Unit-Wise Derivations (311 – 314)</h2>
-          <p class="text-xs sm:text-sm mt-0.5" style="color: var(--ink-secondary);">
-            Complete list of analytical derivations asked in End-Sem exams across ECEPC-311, 312, 313 &amp; 314.
-          </p>
-        </div>
-        <button type="button" onclick="closePanels()" class="theme-btn p-2 rounded-full cursor-pointer self-start sm:self-center" aria-label="Close panel" title="Close">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Core Subject Tabs (311, 312, 313, 314) -->
-      <div id="deriv-subject-tabs" class="flex items-center gap-2 overflow-x-auto py-4"></div>
-
-      <!-- Unit-Wise Derivations Grid -->
-      <div id="deriv-content" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
-
   </main>
 
   <!-- Minimalist Footer -->
@@ -399,7 +363,7 @@
     </p>
   </footer>
 
-  <!-- Interactive Logic: Theme, Pareto Checklist & Unit-Wise Derivations -->
+  <!-- Interactive Logic: Theme & Pareto Checklist -->
   <script>
     (function () {
       // -----------------------------------------------------------------------
@@ -495,178 +459,7 @@
       };
 
       // -----------------------------------------------------------------------
-      // 2. UNIT-WISE DERIVATIONS FOR 311, 312, 313 & 314
-      // -----------------------------------------------------------------------
-      const DERIVATIONS_DATA = {
-        "ECEPC-311": {
-          title: "ECEPC-311 • Electronic Devices",
-          units: [
-            {
-              unit: "Unit I — Semiconductor Physics & Diodes",
-              items: [
-                "Drift & diffusion current density equations and the Einstein relation ($D_n/\mu_n = D_p/\mu_p = V_T$)",
-                "Fermi energy level $E_F$ position in intrinsic, N-type, P-type, and degenerate semiconductors",
-                "Diode dynamic resistance $r_d = \frac{\eta V_T}{I_D + I_0}$ and break-region voltage span ($\Delta V = 6.91\eta V_T$) for $1000\times$ resistance change",
-                "Transition capacitance $C_T = \frac{\varepsilon A}{W} \propto (V_0 + V_R)^{-n}$ and diffusion capacitance $C_D = \frac{\tau I_D}{\eta V_T}$",
-                "Contact potential $V_0 = V_T \ln\left(\frac{N_A N_D}{n_i^2}\right)$ and PIV ratings ($V_m$ vs. $2V_m$) for Half-Wave, Center-Tapped & Bridge rectifiers"
-              ]
-            },
-            {
-              unit: "Unit II — BJT Biasing & h-Parameter Models",
-              items: [
-                "DC load-line equation $I_C = -\frac{V_{CE}}{R_C+R_E} + \frac{V_{CC}}{R_C+R_E}$ and Q-point coordinates",
-                "Stability factors $S = \frac{\partial I_C}{\partial I_{CO}} = \frac{1+\beta}{1 - \beta(\partial I_B/\partial I_C)}$, $S'$, and $S''$ for Fixed, Collector-to-Base, and Voltage-Divider bias",
-                "Relation between DC and AC current gains: $h_{fe} = h_{FE} + I_B \frac{dh_{FE}}{dI_B}$",
-                "Generalized Ebers–Moll equations for a PNP transistor ($I_E, I_C$ in terms of $\alpha_N, \alpha_I, I_{EO}, I_{CO}$)",
-                "Exact small-signal hybrid equations for $A_i, Z_i, A_v$, and $Z_o$ across CB, CE, and CC configurations"
-              ]
-            },
-            {
-              unit: "Unit III — FETs & Special Devices",
-              items: [
-                "Shockley's JFET / D-MOSFET transfer equation $I_D = I_{DSS}\left(1 - \frac{V_{GS}}{V_{GS(\text{off})}}\right)^2$ and transconductance $g_m = g_{m0}\left(1 - \frac{V_{GS}}{V_{GS(\text{off})}}\right)$",
-                "E-MOSFET drain current equations in triode and saturation regions $I_D = k_n(V_{GS} - V_T)^2$",
-                "SCR two-transistor regenerative anode current equation: $I_A = \frac{\alpha_2 I_G + I_{CO1} + I_{CO2}}{1 - (\alpha_1 + \alpha_2)}$",
-                "UJT intrinsic stand-off ratio $\eta = \frac{R_{B1}}{R_{B1}+R_{B2}}$ and peak-point firing voltage $V_P = \eta V_{BB} + V_D$"
-              ]
-            },
-            {
-              unit: "Unit IV — Solid-State Switching Circuits",
-              items: [
-                "Collector-coupled astable multivibrator half-period $T_1 = 0.693 R_1 C_1$ and frequency $f = \frac{1}{1.386 RC}$",
-                "Monostable multivibrator output gate pulse width $T = RC \ln(2) = 0.693 RC$",
-                "RC differentiator ($v_o \approx RC \frac{dv_i}{dt}$ for $RC \ll T$) and RC integrator ($v_o \approx \frac{1}{RC}\int v_i\,dt$ for $RC \gg T$) output equations",
-                "Clamper waveform tilt/droop equation $\Delta V = 2V_m(1 - e^{-T/(2R_L C)})$ and low-tilt criterion $R_L C \ge 10T$"
-              ]
-            }
-          ]
-        },
-        "ECEPC-312": {
-          title: "ECEPC-312 • Digital System Design",
-          units: [
-            {
-              unit: "Unit I — Codes, Boolean Algebra & Minimization",
-              items: [
-                "Binary-to-Gray ($G_i = B_{i+1} \oplus B_i$) and Gray-to-Binary ($B_i = B_{i+1} \oplus G_i$) recursive conversion equations",
-                "Hamming code parity bit count inequality ($2^r \ge k + r + 1$) and syndrome error-position bit equations ($C_1, C_2, C_4, C_8$)",
-                "Algebraic reduction proofs for all 8 degenerate two-level gate forms (AND-AND, OR-OR, NAND-NOR, NOR-NAND, etc.)",
-                "Canonical SOP ($\Sigma m$) to POS ($\Pi M$) conversion and universal NAND-NAND / NOR-NOR double-inversion proofs"
-              ]
-            },
-            {
-              unit: "Unit II — Combinational Logic & Logic Families",
-              items: [
-                "Half Adder ($S = A \oplus B, C = AB$) and Full Adder ($S = A \oplus B \oplus C_{\text{in}}, C_{\text{out}} = AB + C_{\text{in}}(A \oplus B)$) Boolean derivations",
-                "Full Adder realization using two Half Adders and an OR gate algebraic proof",
-                "4-bit BCD Adder decimal correction logic ($C = C_{\text{out}} + S_3 S_2 + S_3 S_1$ adding $0110_2$)",
-                "Magnitude Comparator ($A>B, A=B, A<B$) and Carry-Look-Ahead (CLA) propagate/generate equations ($C_{i+1} = G_i + P_i C_i$)",
-                "Noise Margin ($NM_H = V_{OH}-V_{IH}, NM_L = V_{IL}-V_{OL}$) and Fan-Out current-ratio derivations"
-              ]
-            },
-            {
-              unit: "Unit III — Sequential Circuits, Flip-Flops & Counters",
-              items: [
-                "Characteristic equations via K-map for SR ($Q^+ = S + \bar{R}Q$), JK ($Q^+ = J\bar{Q} + \bar{K}Q$), D ($Q^+ = D$), and T ($Q^+ = T \oplus Q$) flip-flops",
-                "Flip-flop excitation tables and interconversion equations (D $\to$ JK, JK $\to$ T, SR $\to$ D)",
-                "Synchronous counter excitation equations (MOD-10 BCD counter, MOD-13 counter, 4-bit parallel UP/DOWN counter)",
-                "Unused-state self-correction equation derivation for non-binary sequence counters (e.g., $0,1,3,7,6,4$)"
-              ]
-            },
-            {
-              unit: "Unit IV — Memories, PLDs & Timing",
-              items: [
-                "Maximum clock frequency derivation for synchronous pipelines: $f_{\max} = \frac{1}{t_{c-q} + t_{\text{comb}} + t_{su}}$",
-                "PLA / PAL sum-of-products fuse-map minimization for multi-output Boolean functions",
-                "LFSR (PRBS) maximal-length feedback polynomial state-transition sequence derivation ($2^n - 1$ states)"
-              ]
-            }
-          ]
-        },
-        "ECEPC-313": {
-          title: "ECEPC-313 • Signals & Systems",
-          units: [
-            {
-              unit: "Unit I — Signals, Systems & Convolution",
-              items: [
-                "Even and odd component decomposition of any signal: $x_e(t) = \frac{1}{2}[x(t) + x(-t)]$, $x_o(t) = \frac{1}{2}[x(t) - x(-t)]$",
-                "Energy and average power formulas for continuous-time and discrete-time signals",
-                "Continuous-time convolution integral $y(t) = \int_{-\infty}^{\infty} x(\tau)h(t-\tau)\,d\tau$ and discrete convolution sum $y[n] = \sum_{k=-\infty}^{\infty} x[k]h[n-k]$",
-                "Necessary and sufficient conditions for LTI Causality ($h(t)=0$ for $t<0$) and BIBO Stability ($\int_{-\infty}^{\infty}|h(t)|\,dt < \infty$)"
-              ]
-            },
-            {
-              unit: "Unit II — Fourier Series & Fourier Transform",
-              items: [
-                "Trigonometric ($a_0, a_n, b_n$) and Exponential ($c_n$) Fourier Series coefficient integrals using orthogonality",
-                "Conversion identities between Trigonometric and Exponential Fourier Series ($c_n = \frac{1}{2}(a_n - j b_n)$)",
-                "Continuous-Time Fourier Transform (CTFT) pair and proofs of Time-Shifting, Frequency-Shifting, Differentiation, Convolution & Duality properties",
-                "Parseval's energy theorem in time and frequency domains: $\int_{-\infty}^{\infty}|x(t)|^2\,dt = \frac{1}{2\pi}\int_{-\infty}^{\infty}|X(j\omega)|^2\,d\omega$"
-              ]
-            },
-            {
-              unit: "Unit III — Laplace Transform & System Analysis",
-              items: [
-                "Bilateral and Unilateral Laplace Transform integrals and Region of Convergence (ROC) properties",
-                "Laplace differentiation property $\mathcal{L}\{\frac{d^n x}{dt^n}\}$ with initial conditions for solving linear constant-coefficient differential equations",
-                "Initial Value Theorem ($x(0^+) = \lim_{s\to\infty} sX(s)$) and Final Value Theorem ($x(\infty) = \lim_{s\to 0} sX(s)$)",
-                "Transfer function $H(s) = Y(s)/X(s)$, pole-zero plot stability criterion (all poles in open LHP), and step/impulse response"
-              ]
-            },
-            {
-              unit: "Unit IV — Z-Transform & Sampling Theory",
-              items: [
-                "Proof of Nyquist Sampling Theorem ($f_s \ge 2 f_m$) via impulse-train modulation spectrum $X_s(j\omega) = \frac{1}{T_s}\sum X(j(\omega - k\omega_s))$",
-                "Ideal low-pass sinc interpolation formula $x(t) = \sum_{n=-\infty}^{\infty} x(nT_s)\,\text{sinc}\left(\frac{t - nT_s}{T_s}\right)$",
-                "Z-Transform definition $X(z) = \sum x[n]z^{-n}$, ROC rings, and Time-Shifting property for causal difference equations",
-                "Z-domain Initial/Final Value Theorems and unit-circle stability criterion ($|p_k| < 1$)"
-              ]
-            }
-          ]
-        },
-        "ECEPC-314": {
-          title: "ECEPC-314 • Network Theory",
-          units: [
-            {
-              unit: "Unit I — Graph Theory & Transient Analysis",
-              items: [
-                "Fundamental KCL ($A \cdot I_b = 0$), KVL ($B \cdot V_b = 0$), and orthogonality relation ($A \cdot B^T = 0$) from incidence, tie-set, and cut-set matrices",
-                "Time-domain and s-domain transient response of source-free and step-excited RL ($i(t) = I_0 e^{-Rt/L}$) and RC ($v(t) = V_0 e^{-t/RC}$) circuits",
-                "Second-order series & parallel RLC natural response ($s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_0^2}$): Overdamped, Critically Damped, and Underdamped cases",
-                "Laplace-transformed equivalent models of inductors ($sL I(s) - Li(0^-)$) and capacitors ($\frac{V(s)}{s} + \frac{v(0^-)}{s}$)"
-              ]
-            },
-            {
-              unit: "Unit II — AC Network Theorems",
-              items: [
-                "Proof of Maximum Power Transfer Theorem for AC circuits: $Z_L = Z_S^*$ ($R_L = R_S, X_L = -X_S$) and $P_{\max} = \frac{|V_{\text{th}}|^2}{8 R_S}$",
-                "Proof of Reciprocity Theorem, Superposition Theorem, and Millman's Theorem for parallel voltage sources",
-                "Proof of Tellegen's Theorem ($\sum_{k=1}^b v_k i_k = 0$) and Substitution / Compensation Theorem"
-              ]
-            },
-            {
-              unit: "Unit III — Resonance & Magnetically Coupled Circuits",
-              items: [
-                "Series RLC resonance condition ($\omega_0 = \frac{1}{\sqrt{LC}}$), Quality Factor ($Q = \frac{\omega_0 L}{R} = \frac{1}{R}\sqrt{\frac{L}{C}}$), half-power frequencies $\omega_{1,2}$, and Bandwidth ($\text{BW} = \frac{R}{L} = \frac{\omega_0}{Q}$)",
-                "Parallel tank resonant frequency $\omega_0 = \sqrt{\frac{1}{LC} - \frac{R^2}{L^2}}$ and dynamic impedance $Z_d = \frac{L}{CR}$",
-                "Coefficient of coupling $k = \frac{M}{\sqrt{L_1 L_2}} \le 1$ via stored magnetic energy $W = \frac{1}{2}L_1 i_1^2 + \frac{1}{2}L_2 i_2^2 \pm M i_1 i_2 \ge 0$",
-                "Equivalent T-network ($L_1 - M, L_2 - M, M$) and reflected impedance $Z_{\text{ref}} = \frac{\omega^2 M^2}{Z_{22}}$ for coupled coils"
-              ]
-            },
-            {
-              unit: "Unit IV — Two-Port Networks & Network Synthesis",
-              items: [
-                "Defining equations and open/short-circuit parameter derivations for Z, Y, ABCD (Transmission), and h-parameters",
-                "Symmetry and Reciprocity conditions across all 4 two-port parameter sets ($Z_{11}=Z_{22}, Z_{12}=Z_{21}$; $AD - BC = 1$; $\Delta_h = 1$)",
-                "Overall parameter derivations for Cascade ($[T] = [T_a][T_b]$), Series ($[Z] = [Z_a]+[Z_b]$), and Parallel ($[Y] = [Y_a]+[Y_b]$) interconnections",
-                "Foster I, Foster II, Cauer I, and Cauer II canonical synthesis expansions for lossless LC and RC driving-point immittance functions"
-              ]
-            }
-          ]
-        }
-      };
-
-      // -----------------------------------------------------------------------
-      // 3. STATE & THEME PERSISTENCE
+      // 2. STATE & THEME PERSISTENCE
       // -----------------------------------------------------------------------
       const THEME_KEY = 'btech-nep-theme';
       const PARETO_CHECK_KEY = 'btech-nep-pareto-checked';
@@ -677,13 +470,10 @@
       const iconMoon = document.getElementById('icon-moon');
 
       const btnPareto = document.getElementById('btn-pareto');
-      const btnDerivations = document.getElementById('btn-derivations');
       const panelPareto = document.getElementById('panel-pareto');
-      const panelDerivations = document.getElementById('panel-derivations');
 
-      let activePanel = null; // 'pareto' | 'derivations' | null
+      let activePanel = null; // 'pareto' | null
       let activeParetoSub = 'ECEPC-311';
-      let activeDerivSub = 'ECEPC-311';
       let checkedTopics = new Set();
 
       try {
@@ -728,16 +518,13 @@
       });
 
       // -----------------------------------------------------------------------
-      // 4. PANEL TOGGLING & RENDERING
+      // 3. PANEL TOGGLING & RENDERING
       // -----------------------------------------------------------------------
       window.closePanels = function () {
         activePanel = null;
         panelPareto.classList.add('hidden');
-        panelDerivations.classList.add('hidden');
         btnPareto.classList.remove('active');
-        btnDerivations.classList.remove('active');
         btnPareto.setAttribute('aria-expanded', 'false');
-        btnDerivations.setAttribute('aria-expanded', 'false');
       };
 
       function openPanel(name) {
@@ -753,17 +540,10 @@
           btnPareto.setAttribute('aria-expanded', 'true');
           renderPareto();
           panelPareto.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else if (name === 'derivations') {
-          panelDerivations.classList.remove('hidden');
-          btnDerivations.classList.add('active');
-          btnDerivations.setAttribute('aria-expanded', 'true');
-          renderDerivations();
-          panelDerivations.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }
 
       btnPareto.addEventListener('click', () => openPanel('pareto'));
-      btnDerivations.addEventListener('click', () => openPanel('derivations'));
 
       window.selectParetoSub = function (subKey) {
         activeParetoSub = subKey;
@@ -831,50 +611,6 @@
                   </p>
                 </div>
               </label>
-            `;
-          })
-          .join('');
-      }
-
-      window.selectDerivSub = function (subKey) {
-        activeDerivSub = subKey;
-        renderDerivations();
-      };
-
-      function renderDerivations() {
-        const tabsEl = document.getElementById('deriv-subject-tabs');
-        const contentEl = document.getElementById('deriv-content');
-
-        tabsEl.innerHTML = Object.keys(DERIVATIONS_DATA)
-          .map((key) => {
-            const isActive = key === activeDerivSub;
-            return `<button type="button" onclick="selectDerivSub('${key}')" class="sub-pill px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap cursor-pointer ${isActive ? 'active' : ''}">${DERIVATIONS_DATA[key].title}</button>`;
-          })
-          .join('');
-
-        const subData = DERIVATIONS_DATA[activeDerivSub];
-        contentEl.innerHTML = subData.units
-          .map((u) => {
-            const listItems = u.items
-              .map(
-                (d) => `
-                  <li class="text-xs sm:text-[13px] leading-relaxed flex items-start gap-2">
-                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--accent);"></span>
-                    <span>${d}</span>
-                  </li>
-                `
-              )
-              .join('');
-
-            return `
-              <div class="item-row rounded-2xl p-4 sm:p-5">
-                <h3 class="text-xs sm:text-sm font-bold tracking-tight mb-3 pb-2 border-b" style="border-color: var(--border-card); color: var(--accent);">
-                  ${u.unit}
-                </h3>
-                <ul class="space-y-2 list-none p-0 m-0">
-                  ${listItems}
-                </ul>
-              </div>
             `;
           })
           .join('');
