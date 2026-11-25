@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B.Tech. 3rd Semester Solved Question Bank</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Fraunces (Serif Display) & Plus Jakarta Sans (Clean Sans-Serif) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-page: #FAF6F0;
+      --bg-card: #F3ECE1;
+      --bg-card-hover: #EFE6D8;
+      --bg-elevated: #FFFDF9;
+      --border-card: #E5DAC8;
+      --ink-primary: #2C241E;
+      --ink-secondary: #6E5F53;
+      --accent: #B85D3B;
+      --accent-soft: rgba(184, 93, 59, 0.12);
+      --sage: #3B6E5C;
+      --sage-soft: rgba(59, 110, 92, 0.13);
+      --amber: #A66E28;
+      --amber-soft: rgba(166, 110, 40, 0.13);
+      --muted-badge: rgba(110, 95, 83, 0.12);
+    }
+
+    html.dark {
+      --bg-page: #1C1917;
+      --bg-card: #26221F;
+      --bg-card-hover: #2E2925;
+      --bg-elevated: #2B2623;
+      --border-card: #38322D;
+      --ink-primary: #EAE2D6;
+      --ink-secondary: #9E9183;
+      --accent: #E09F5A;
+      --accent-soft: rgba(224, 159, 90, 0.14);
+      --sage: #6BA38E;
+      --sage-soft: rgba(107, 163, 142, 0.15);
+      --amber: #E5B567;
+      --amber-soft: rgba(229, 181, 103, 0.15);
+      --muted-badge: rgba(158, 145, 131, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--ink-primary);
+      transition: background-color 0.25s ease, color 0.25s ease;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Fraunces', Georgia, serif;
+    }
+
+    .tile-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      transition: transform 0.22s ease, background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    a.tile-card:hover,
+    a.tile-card:focus-visible {
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -8px rgba(44, 36, 30, 0.12);
+      outline: none;
+    }
+
+    html.dark a.tile-card:hover,
+    html.dark a.tile-card:focus-visible {
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.45);
+    }
+
+    .icon-badge {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      transition: transform 0.22s ease;
+    }
+
+    a.tile-card:hover .icon-badge {
+      transform: scale(1.06);
+    }
+
+    .theme-btn, .pill-btn {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--ink-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .pill-btn:hover {
+      color: var(--ink-primary);
+      border-color: var(--accent);
+      background-color: var(--bg-card-hover);
+    }
+
+    .pill-btn.active {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #FFFDF9;
+    }
+
+    html.dark .pill-btn.active {
+      color: #1C1917;
+    }
+
+    .sub-pill {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-card);
+      color: var(--ink-secondary);
+      transition: all 0.18s ease;
+    }
+
+    .sub-pill:hover {
+      color: var(--ink-primary);
+      border-color: var(--accent);
+    }
+
+    .sub-pill.active {
+      background-color: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .panel-surface {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      animation: fadeIn 0.22s ease-out;
+    }
+
+    .item-row {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-card);
+      transition: border-color 0.18s ease, opacity 0.18s ease;
+    }
+
+    .item-row:hover {
+      border-color: var(--accent);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-[#B85D3B]/20">
+
+  <!-- Subtle Corner Light / Dark Mode Toggle -->
+  <header class="w-full max-w-5xl mx-auto px-6 pt-6 sm:pt-8 flex justify-end">
+    <button
+      id="theme-toggle"
+      type="button"
+      class="theme-btn p-2.5 rounded-full cursor-pointer flex items-center justify-center"
+      aria-label="Toggle warm light or dark theme"
+      title="Switch theme"
+    >
+      <!-- Sun icon (shown in dark mode) -->
+      <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
+      </svg>
+      <!-- Moon icon (shown in light mode) -->
+      <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Centered Main Workspace -->
+  <main class="w-full max-w-4xl mx-auto px-6 py-10 sm:py-14 flex-1 flex flex-col items-center justify-center">
+
+    <!-- Minimalist Hero Heading -->
+    <h1 class="font-display text-3xl sm:text-4xl md:text-[2.65rem] font-bold tracking-tight text-center leading-tight mb-10 sm:mb-12 max-w-2xl">
+      B.Tech. 3rd Semester Solved Question Bank
+    </h1>
+
+    <!-- Clean 6-Tile Subject Grid -->
+    <section aria-label="Subjects" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+
+      <!-- 1. Probability & Statistics -->
+      <a href="mafc_311_probability_statistics_numerical_methods_exam_prep.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Bell Curve / Statistics SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 18h18" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 17c3.2 0 4.5-11 8-11s4.8 11 8 11" />
+            <path stroke-linecap="round" stroke-dasharray="2 2" d="M12 6v12" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Probability &amp; Statistics
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          MAFC-311
+        </span>
+      </a>
+
+      <!-- 2. Electronic Devices -->
+      <a href="ecepc_311_electronic_devices_complete_exam_prep.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Semiconductor BJT / Diode Symbol SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 8v8M4 12h5.5M9.5 10.2L15 6.8v-2M9.5 13.8L15 17.2v2" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 17.2h2v-2" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Electronic Devices
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          ECEPC-311
+        </span>
+      </a>
+
+      <!-- 3. Digital System Design -->
+      <a href="ecepc_312_digital_system_design_complete_exam_prep.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Logic Gate (AND / NAND) SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9h4M3 15h4M18 12h3" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 6h5a6 6 0 010 12H7V6z" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Digital System Design
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          ECEPC-312
+        </span>
+      </a>
+
+      <!-- 4. Signals & Systems -->
+      <a href="ecepc_313_signals_and_systems_complete_exam_prep.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Continuous Sine Waveform SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20" opacity="0.35" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12c2.2-6 4.8-6 7 0s4.8 6 7 0c1.1-3 2.5-4.5 4-4.5" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Signals &amp; Systems
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          ECEPC-313
+        </span>
+      </a>
+
+      <!-- 5. Network Theory (Active Link to PYQ Explorer) -->
+      <a href="ecepc_314_network_theory_pyq_explorer.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Circuit Resistor Zig-Zag SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h4l1.5-4 3 8 3-8 3 8 1.5-4h4" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Network Theory
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          ECEPC-314
+        </span>
+      </a>
+
+      <!-- 6. Engineering Economics -->
+      <a href="hs_311_engineering_economics_complete_exam_prep.html" class="tile-card rounded-3xl p-7 sm:p-8 flex flex-col items-center text-center group">
+        <div class="icon-badge w-14 h-14 rounded-2xl flex items-center justify-center mb-5">
+          <!-- Supply-Demand / Growth Trend SVG Icon -->
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v16h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 15l4-4 3 3 5-6" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 8h4v4" />
+          </svg>
+        </div>
+        <h2 class="text-base sm:text-lg font-bold tracking-tight mb-1">
+          Engineering Economics
+        </h2>
+        <span class="text-xs font-medium tracking-wider uppercase" style="color: var(--ink-secondary);">
+          HS-311
+        </span>
+      </a>
+
+    </section>
+
+    <!-- Minimalist Action Buttons for Pareto's Principle & Derivations List -->
+    <div class="mt-9 sm:mt-11 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+      <button
+        id="btn-pareto"
+        type="button"
+        class="pill-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold cursor-pointer inline-flex items-center gap-2"
+        aria-expanded="false"
+        aria-controls="panel-pareto"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Pareto's Principle</span>
+      </button>
+
+      <button
+        id="btn-derivations"
+        type="button"
+        class="pill-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold cursor-pointer inline-flex items-center gap-2"
+        aria-expanded="false"
+        aria-controls="panel-derivations"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h10M4 17h13" />
+        </svg>
+        <span>Unit-Wise Derivations (311–314)</span>
+      </button>
+    </div>
+
+    <!-- Expandable Section 1: Pareto's Principle (80/20 Topic Checklist) -->
+    <section id="panel-pareto" class="hidden w-full mt-7 panel-surface rounded-3xl p-5 sm:p-7" aria-label="Pareto's Principle Topic Checklist">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b" style="border-color: var(--border-card);">
+        <div>
+          <h2 class="font-display text-xl sm:text-2xl font-bold tracking-tight">Pareto's Principle (80/20 Exam Roadmap)</h2>
+          <p class="text-xs sm:text-sm mt-0.5" style="color: var(--ink-secondary);">
+            Topics ranked from highest exam weightage (<strong>Must Do</strong>) to lowest (<strong>Leave</strong>). Progress saves automatically.
+          </p>
+        </div>
+        <div class="flex items-center gap-2.5 self-start sm:self-center">
+          <span id="pareto-progress" class="text-xs font-bold px-3 py-1.5 rounded-full" style="background-color: var(--sage-soft); color: var(--sage);">
+            0 / 0 Done
+          </span>
+          <button type="button" onclick="closePanels()" class="theme-btn p-2 rounded-full cursor-pointer" aria-label="Close panel" title="Close">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Subject Filter Pills -->
+      <div id="pareto-subject-tabs" class="flex items-center gap-2 overflow-x-auto py-4"></div>
+
+      <!-- Tier Legend -->
+      <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold mb-4">
+        <span class="px-2.5 py-0.5 rounded-full" style="background-color: var(--accent-soft); color: var(--accent);">Must Do (~80% Marks)</span>
+        <span class="px-2.5 py-0.5 rounded-full" style="background-color: var(--amber-soft); color: var(--amber);">Should Do (~15% Marks)</span>
+        <span class="px-2.5 py-0.5 rounded-full" style="background-color: var(--muted-badge); color: var(--ink-secondary);">Leave / Low Yield (~5% Marks)</span>
+      </div>
+
+      <!-- Checklist Container -->
+      <div id="pareto-list" class="space-y-2.5"></div>
+    </section>
+
+    <!-- Expandable Section 2: Unit-Wise Derivations (ECEPC-311, 312, 313, 314) -->
+    <section id="panel-derivations" class="hidden w-full mt-7 panel-surface rounded-3xl p-5 sm:p-7" aria-label="Unit-Wise Derivations">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b" style="border-color: var(--border-card);">
+        <div>
+          <h2 class="font-display text-xl sm:text-2xl font-bold tracking-tight">Unit-Wise Derivations (311 – 314)</h2>
+          <p class="text-xs sm:text-sm mt-0.5" style="color: var(--ink-secondary);">
+            Complete list of analytical derivations asked in End-Sem exams across ECEPC-311, 312, 313 &amp; 314.
+          </p>
+        </div>
+        <button type="button" onclick="closePanels()" class="theme-btn p-2 rounded-full cursor-pointer self-start sm:self-center" aria-label="Close panel" title="Close">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Core Subject Tabs (311, 312, 313, 314) -->
+      <div id="deriv-subject-tabs" class="flex items-center gap-2 overflow-x-auto py-4"></div>
+
+      <!-- Unit-Wise Derivations Grid -->
+      <div id="deriv-content" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer class="w-full py-7 px-6 text-center">
+    <p class="text-xs sm:text-sm font-medium inline-flex items-center justify-center gap-1.5" style="color: var(--ink-secondary);">
+      <span>Made with</span>
+      <svg class="w-4 h-4 inline-block shrink-0" style="color: var(--accent);" fill="currentColor" viewBox="0 0 24 24" aria-label="love">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+      </svg>
+      <span>by <span style="color: var(--ink-primary);" class="font-semibold">Akshansh Sharma</span></span>
+    </p>
+  </footer>
+
+  <!-- Interactive Logic: Theme, Pareto Checklist & Unit-Wise Derivations -->
+  <script>
+    (function () {
+      // -----------------------------------------------------------------------
+      // 1. PARETO'S PRINCIPLE DATA (MOST WEIGHTAGE -> LEAST WEIGHTAGE)
+      // -----------------------------------------------------------------------
+      const PARETO_DATA = {
+        "ECEPC-311": {
+          label: "ECEPC-311 • Electronic Devices",
+          topics: [
+            { id: "p311-1", tier: "Must Do", unit: "Unit II", title: "BJT Voltage-Divider Biasing, Q-Point Stabilization & Stability Factors (S, S', S'')" },
+            { id: "p311-2", tier: "Must Do", unit: "Unit II", title: "Complete & Simplified CE h-Parameter Small-Signal Model (Ai, Av, Zi, Zo)" },
+            { id: "p311-3", tier: "Must Do", unit: "Unit I", title: "PN Junction V-I Characteristics, Dynamic Resistance, Transition & Diffusion Capacitance" },
+            { id: "p311-4", tier: "Must Do", unit: "Unit IV", title: "Diode Clippers (Series, Shunt, Biased, Dual) & Clampers (Positive, Negative, Tilt)" },
+            { id: "p311-5", tier: "Must Do", unit: "Unit III", title: "JFET & MOSFET (Depletion & Enhancement) Construction, Pinch-Off & Shockley Curve" },
+            { id: "p311-6", tier: "Must Do", unit: "Unit IV", title: "Collector-Coupled Astable & Monostable Multivibrators (Waveforms & Frequency)" },
+            { id: "p311-7", tier: "Should Do", unit: "Unit III", title: "SCR Two-Transistor Analogy, Latching/Holding Current, TRIAC 4 Modes & UJT" },
+            { id: "p311-8", tier: "Should Do", unit: "Unit I", title: "Fermi Level Calculations in N/P-Type & Degenerate Semiconductors + Drift/Diffusion" },
+            { id: "p311-9", tier: "Should Do", unit: "Unit IV", title: "RC Differentiator & Integrator Circuits (Time-Constant Conditions & Sine Response)" },
+            { id: "p311-10", tier: "Should Do", unit: "Unit III", title: "Optoelectronic Devices: High-Efficiency LED Measures, Indirect Bandgap in Si, LDR" },
+            { id: "p311-11", tier: "Leave", unit: "Unit I", title: "Diode Break-Region Factor of 1000 Proof & Graphical Dynamic Curve Construction" },
+            { id: "p311-12", tier: "Leave", unit: "Unit IV", title: "Mechanical vs. Electromechanical Relays & General Diode Applications List" }
+          ]
+        },
+        "ECEPC-312": {
+          label: "ECEPC-312 • Digital System Design",
+          topics: [
+            { id: "p312-1", tier: "Must Do", unit: "Unit I", title: "4-Variable & 5-Variable K-Map Minimization + Universal NAND/NOR Realization" },
+            { id: "p312-2", tier: "Must Do", unit: "Unit III", title: "Synchronous Counter Design (MOD-N, Custom Sequence, Lockout State Correction)" },
+            { id: "p312-3", tier: "Must Do", unit: "Unit II", title: "Boolean Function Implementation using 4:1 / 8:1 Multiplexers & 3-to-8 Decoders" },
+            { id: "p312-4", tier: "Must Do", unit: "Unit III", title: "Master-Slave JK Flip-Flop, Race-Around Condition & Flip-Flop Conversions (D to JK)" },
+            { id: "p312-5", tier: "Must Do", unit: "Unit I", title: "Hamming Code Error Detection/Correction & Number Conversions (BCD, Gray, XS-3)" },
+            { id: "p312-6", tier: "Must Do", unit: "Unit IV", title: "Synthesizable VHDL Coding (MUX, Decoder, Counters, Shift Registers, Behavioral/Structural)" },
+            { id: "p312-7", tier: "Should Do", unit: "Unit II", title: "TTL NAND Gate Totem-Pole Operation & TTL vs. ECL vs. CMOS Comparison" },
+            { id: "p312-8", tier: "Should Do", unit: "Unit IV", title: "FPGA Architecture (CLB, 4-LUT, Switch Matrix), PLA vs. PAL & SRAM/DRAM Cells" },
+            { id: "p312-9", tier: "Should Do", unit: "Unit I", title: "Quine-McCluskey Tabulation Method & BCD Addition Algorithm" },
+            { id: "p312-10", tier: "Leave", unit: "Unit I", title: "Eight Degenerate Two-Level Gate Forms Algebraic Reduction Proof" },
+            { id: "p312-11", tier: "Leave", unit: "Unit IV", title: "IEEE 754 Floating-Point Format & ASM Chart Oval/Diamond Notation" }
+          ]
+        },
+        "ECEPC-313": {
+          label: "ECEPC-313 • Signals & Systems",
+          topics: [
+            { id: "p313-1", tier: "Must Do", unit: "Unit III", title: "Bilateral & Unilateral Laplace Transform, ROC Properties & Differential Equation Solving" },
+            { id: "p313-2", tier: "Must Do", unit: "Unit IV", title: "Z-Transform, ROC, Partial-Fraction Inverse ZT & Difference Equation Causality/Stability" },
+            { id: "p313-3", tier: "Must Do", unit: "Unit II", title: "Continuous-Time Fourier Transform (CTFT) Properties (Time/Freq Shift, Parseval, Duality)" },
+            { id: "p313-4", tier: "Must Do", unit: "Unit I", title: "LTI System Graphical & Analytical Convolution (Continuous & Discrete) + BIBO Stability" },
+            { id: "p313-5", tier: "Must Do", unit: "Unit II", title: "Trigonometric & Exponential Fourier Series Coefficients & Dirichlet Conditions" },
+            { id: "p313-6", tier: "Must Do", unit: "Unit IV", title: "Nyquist Sampling Theorem, Aliasing Prevention & Zero-Order Hold Reconstruction" },
+            { id: "p313-7", tier: "Should Do", unit: "Unit I", title: "System Classification (Linearity, Time-Invariance, Causality, Memory, Invertibility)" },
+            { id: "p313-8", tier: "Should Do", unit: "Unit I", title: "Energy vs. Power Signals Classification & Odd/Even Signal Decomposition" },
+            { id: "p313-9", tier: "Should Do", unit: "Unit III", title: "Initial & Final Value Theorems in Laplace and Z-Domains + Pole-Zero Stability" },
+            { id: "p313-10", tier: "Leave", unit: "Unit II", title: "Gibbs Phenomenon Overshoot Derivation & Signal-Vector Orthogonality Analogy" }
+          ]
+        },
+        "ECEPC-314": {
+          label: "ECEPC-314 • Network Theory",
+          topics: [
+            { id: "p314-1", tier: "Must Do", unit: "Unit II", title: "AC Network Theorems: Thévenin, Norton, Superposition & Maximum Power Transfer (ZL = ZS*)" },
+            { id: "p314-2", tier: "Must Do", unit: "Unit IV", title: "Two-Port Parameters (Z, Y, ABCD, h), Interconversions & Symmetry/Reciprocity Conditions" },
+            { id: "p314-3", tier: "Must Do", unit: "Unit III", title: "Series & Parallel RLC Resonance (Q-Factor, Bandwidth, Half-Power Frequencies f1, f2)" },
+            { id: "p314-4", tier: "Must Do", unit: "Unit I", title: "Laplace-Domain Transient Analysis of RL, RC & RLC Circuits with Initial Conditions" },
+            { id: "p314-5", tier: "Must Do", unit: "Unit I", title: "Mesh & Nodal Analysis with Dependent Sources and Supermesh / Supernode" },
+            { id: "p314-6", tier: "Should Do", unit: "Unit III", title: "Magnetically Coupled Circuits, Dot Convention, Mutual Inductance & Tuned Transformers" },
+            { id: "p314-7", tier: "Should Do", unit: "Unit IV", title: "Interconnection of Two-Port Networks (Cascade, Series, Parallel) & Image Impedance" },
+            { id: "p314-8", tier: "Should Do", unit: "Unit I", title: "Graph Theory: Incidence Matrix, Tie-Set (Loop) Matrix & Cut-Set Matrix Equations" },
+            { id: "p314-9", tier: "Leave", unit: "Unit II", title: "Tellegen's Theorem & Compensation / Substitution Theorem Proofs" },
+            { id: "p314-10", tier: "Leave", unit: "Unit IV", title: "Foster & Cauer LC/RC Network Synthesis Canonical Forms" }
+          ]
+        },
+        "MAFC-311": {
+          label: "MAFC-311 • Probability & Statistics",
+          topics: [
+            { id: "pma-1", tier: "Must Do", unit: "Unit I", title: "Bayes' Theorem, Conditional Probability & Total Probability Word Problems" },
+            { id: "pma-2", tier: "Must Do", unit: "Unit II", title: "Binomial, Poisson & Normal Distribution Numericals + Mean/Variance Proofs" },
+            { id: "pma-3", tier: "Must Do", unit: "Unit III", title: "Hypothesis Testing: t-Test, Chi-Square Goodness-of-Fit & Z-Test for Means/Proportions" },
+            { id: "pma-4", tier: "Must Do", unit: "Unit IV", title: "Numerical Solutions: Newton-Raphson, Runge-Kutta 4th Order (RK4) & Simpson's 1/3 Rule" },
+            { id: "pma-5", tier: "Should Do", unit: "Unit II", title: "Joint PDF/PMF, Marginal Distributions, Covariance & Karl Pearson Correlation" },
+            { id: "pma-6", tier: "Should Do", unit: "Unit III", title: "Curve Fitting by Method of Least Squares (Straight Line & Parabola) + Regression Lines" },
+            { id: "pma-7", tier: "Leave", unit: "Unit IV", title: "Gauss-Seidel Iterative Convergence Proof & Finite Difference Operator Identities" }
+          ]
+        },
+        "HS-311": {
+          label: "HS-311 • Engineering Economics",
+          topics: [
+            { id: "phs-1", tier: "Must Do", unit: "Unit II", title: "Time Value of Money: NPV, IRR, Payback Period & Benefit-Cost Ratio Project Evaluation" },
+            { id: "phs-2", tier: "Must Do", unit: "Unit I", title: "Law of Demand & Supply, Price Elasticity of Demand & Market Equilibrium" },
+            { id: "phs-3", tier: "Must Do", unit: "Unit III", title: "Break-Even Analysis (BEP Units/Sales, Margin of Safety, P/V Ratio) & Cost Classification" },
+            { id: "phs-4", tier: "Should Do", unit: "Unit III", title: "Depreciation Methods (Straight-Line, Declining Balance, Sum-of-Years-Digits)" },
+            { id: "phs-5", tier: "Should Do", unit: "Unit IV", title: "Market Structures (Perfect Competition, Monopoly, Oligopoly) & Inflation/GDP" },
+            { id: "phs-6", tier: "Leave", unit: "Unit IV", title: "Historical Evolution of Classical Economic Schools & Balance Sheet Ratios" }
+          ]
+        }
+      };
+
+      // -----------------------------------------------------------------------
+      // 2. UNIT-WISE DERIVATIONS FOR 311, 312, 313 & 314
+      // -----------------------------------------------------------------------
+      const DERIVATIONS_DATA = {
+        "ECEPC-311": {
+          title: "ECEPC-311 • Electronic Devices",
+          units: [
+            {
+              unit: "Unit I — Semiconductor Physics & Diodes",
+              items: [
+                "Drift & diffusion current density equations and the Einstein relation ($D_n/\mu_n = D_p/\mu_p = V_T$)",
+                "Fermi energy level $E_F$ position in intrinsic, N-type, P-type, and degenerate semiconductors",
+                "Diode dynamic resistance $r_d = \frac{\eta V_T}{I_D + I_0}$ and break-region voltage span ($\Delta V = 6.91\eta V_T$) for $1000\times$ resistance change",
+                "Transition capacitance $C_T = \frac{\varepsilon A}{W} \propto (V_0 + V_R)^{-n}$ and diffusion capacitance $C_D = \frac{\tau I_D}{\eta V_T}$",
+                "Contact potential $V_0 = V_T \ln\left(\frac{N_A N_D}{n_i^2}\right)$ and PIV ratings ($V_m$ vs. $2V_m$) for Half-Wave, Center-Tapped & Bridge rectifiers"
+              ]
+            },
+            {
+              unit: "Unit II — BJT Biasing & h-Parameter Models",
+              items: [
+                "DC load-line equation $I_C = -\frac{V_{CE}}{R_C+R_E} + \frac{V_{CC}}{R_C+R_E}$ and Q-point coordinates",
+                "Stability factors $S = \frac{\partial I_C}{\partial I_{CO}} = \frac{1+\beta}{1 - \beta(\partial I_B/\partial I_C)}$, $S'$, and $S''$ for Fixed, Collector-to-Base, and Voltage-Divider bias",
+                "Relation between DC and AC current gains: $h_{fe} = h_{FE} + I_B \frac{dh_{FE}}{dI_B}$",
+                "Generalized Ebers–Moll equations for a PNP transistor ($I_E, I_C$ in terms of $\alpha_N, \alpha_I, I_{EO}, I_{CO}$)",
+                "Exact small-signal hybrid equations for $A_i, Z_i, A_v$, and $Z_o$ across CB, CE, and CC configurations"
+              ]
+            },
+            {
+              unit: "Unit III — FETs & Special Devices",
+              items: [
+                "Shockley's JFET / D-MOSFET transfer equation $I_D = I_{DSS}\left(1 - \frac{V_{GS}}{V_{GS(\text{off})}}\right)^2$ and transconductance $g_m = g_{m0}\left(1 - \frac{V_{GS}}{V_{GS(\text{off})}}\right)$",
+                "E-MOSFET drain current equations in triode and saturation regions $I_D = k_n(V_{GS} - V_T)^2$",
+                "SCR two-transistor regenerative anode current equation: $I_A = \frac{\alpha_2 I_G + I_{CO1} + I_{CO2}}{1 - (\alpha_1 + \alpha_2)}$",
+                "UJT intrinsic stand-off ratio $\eta = \frac{R_{B1}}{R_{B1}+R_{B2}}$ and peak-point firing voltage $V_P = \eta V_{BB} + V_D$"
+              ]
+            },
+            {
+              unit: "Unit IV — Solid-State Switching Circuits",
+              items: [
+                "Collector-coupled astable multivibrator half-period $T_1 = 0.693 R_1 C_1$ and frequency $f = \frac{1}{1.386 RC}$",
+                "Monostable multivibrator output gate pulse width $T = RC \ln(2) = 0.693 RC$",
+                "RC differentiator ($v_o \approx RC \frac{dv_i}{dt}$ for $RC \ll T$) and RC integrator ($v_o \approx \frac{1}{RC}\int v_i\,dt$ for $RC \gg T$) output equations",
+                "Clamper waveform tilt/droop equation $\Delta V = 2V_m(1 - e^{-T/(2R_L C)})$ and low-tilt criterion $R_L C \ge 10T$"
+              ]
+            }
+          ]
+        },
+        "ECEPC-312": {
+          title: "ECEPC-312 • Digital System Design",
+          units: [
+            {
+              unit: "Unit I — Codes, Boolean Algebra & Minimization",
+              items: [
+                "Binary-to-Gray ($G_i = B_{i+1} \oplus B_i$) and Gray-to-Binary ($B_i = B_{i+1} \oplus G_i$) recursive conversion equations",
+                "Hamming code parity bit count inequality ($2^r \ge k + r + 1$) and syndrome error-position bit equations ($C_1, C_2, C_4, C_8$)",
+                "Algebraic reduction proofs for all 8 degenerate two-level gate forms (AND-AND, OR-OR, NAND-NOR, NOR-NAND, etc.)",
+                "Canonical SOP ($\Sigma m$) to POS ($\Pi M$) conversion and universal NAND-NAND / NOR-NOR double-inversion proofs"
+              ]
+            },
+            {
+              unit: "Unit II — Combinational Logic & Logic Families",
+              items: [
+                "Half Adder ($S = A \oplus B, C = AB$) and Full Adder ($S = A \oplus B \oplus C_{\text{in}}, C_{\text{out}} = AB + C_{\text{in}}(A \oplus B)$) Boolean derivations",
+                "Full Adder realization using two Half Adders and an OR gate algebraic proof",
+                "4-bit BCD Adder decimal correction logic ($C = C_{\text{out}} + S_3 S_2 + S_3 S_1$ adding $0110_2$)",
+                "Magnitude Comparator ($A>B, A=B, A<B$) and Carry-Look-Ahead (CLA) propagate/generate equations ($C_{i+1} = G_i + P_i C_i$)",
+                "Noise Margin ($NM_H = V_{OH}-V_{IH}, NM_L = V_{IL}-V_{OL}$) and Fan-Out current-ratio derivations"
+              ]
+            },
+            {
+              unit: "Unit III — Sequential Circuits, Flip-Flops & Counters",
+              items: [
+                "Characteristic equations via K-map for SR ($Q^+ = S + \bar{R}Q$), JK ($Q^+ = J\bar{Q} + \bar{K}Q$), D ($Q^+ = D$), and T ($Q^+ = T \oplus Q$) flip-flops",
+                "Flip-flop excitation tables and interconversion equations (D $\to$ JK, JK $\to$ T, SR $\to$ D)",
+                "Synchronous counter excitation equations (MOD-10 BCD counter, MOD-13 counter, 4-bit parallel UP/DOWN counter)",
+                "Unused-state self-correction equation derivation for non-binary sequence counters (e.g., $0,1,3,7,6,4$)"
+              ]
+            },
+            {
+              unit: "Unit IV — Memories, PLDs & Timing",
+              items: [
+                "Maximum clock frequency derivation for synchronous pipelines: $f_{\max} = \frac{1}{t_{c-q} + t_{\text{comb}} + t_{su}}$",
+                "PLA / PAL sum-of-products fuse-map minimization for multi-output Boolean functions",
+                "LFSR (PRBS) maximal-length feedback polynomial state-transition sequence derivation ($2^n - 1$ states)"
+              ]
+            }
+          ]
+        },
+        "ECEPC-313": {
+          title: "ECEPC-313 • Signals & Systems",
+          units: [
+            {
+              unit: "Unit I — Signals, Systems & Convolution",
+              items: [
+                "Even and odd component decomposition of any signal: $x_e(t) = \frac{1}{2}[x(t) + x(-t)]$, $x_o(t) = \frac{1}{2}[x(t) - x(-t)]$",
+                "Energy and average power formulas for continuous-time and discrete-time signals",
+                "Continuous-time convolution integral $y(t) = \int_{-\infty}^{\infty} x(\tau)h(t-\tau)\,d\tau$ and discrete convolution sum $y[n] = \sum_{k=-\infty}^{\infty} x[k]h[n-k]$",
+                "Necessary and sufficient conditions for LTI Causality ($h(t)=0$ for $t<0$) and BIBO Stability ($\int_{-\infty}^{\infty}|h(t)|\,dt < \infty$)"
+              ]
+            },
+            {
+              unit: "Unit II — Fourier Series & Fourier Transform",
+              items: [
+                "Trigonometric ($a_0, a_n, b_n$) and Exponential ($c_n$) Fourier Series coefficient integrals using orthogonality",
+                "Conversion identities between Trigonometric and Exponential Fourier Series ($c_n = \frac{1}{2}(a_n - j b_n)$)",
+                "Continuous-Time Fourier Transform (CTFT) pair and proofs of Time-Shifting, Frequency-Shifting, Differentiation, Convolution & Duality properties",
+                "Parseval's energy theorem in time and frequency domains: $\int_{-\infty}^{\infty}|x(t)|^2\,dt = \frac{1}{2\pi}\int_{-\infty}^{\infty}|X(j\omega)|^2\,d\omega$"
+              ]
+            },
+            {
+              unit: "Unit III — Laplace Transform & System Analysis",
+              items: [
+                "Bilateral and Unilateral Laplace Transform integrals and Region of Convergence (ROC) properties",
+                "Laplace differentiation property $\mathcal{L}\{\frac{d^n x}{dt^n}\}$ with initial conditions for solving linear constant-coefficient differential equations",
+                "Initial Value Theorem ($x(0^+) = \lim_{s\to\infty} sX(s)$) and Final Value Theorem ($x(\infty) = \lim_{s\to 0} sX(s)$)",
+                "Transfer function $H(s) = Y(s)/X(s)$, pole-zero plot stability criterion (all poles in open LHP), and step/impulse response"
+              ]
+            },
+            {
+              unit: "Unit IV — Z-Transform & Sampling Theory",
+              items: [
+                "Proof of Nyquist Sampling Theorem ($f_s \ge 2 f_m$) via impulse-train modulation spectrum $X_s(j\omega) = \frac{1}{T_s}\sum X(j(\omega - k\omega_s))$",
+                "Ideal low-pass sinc interpolation formula $x(t) = \sum_{n=-\infty}^{\infty} x(nT_s)\,\text{sinc}\left(\frac{t - nT_s}{T_s}\right)$",
+                "Z-Transform definition $X(z) = \sum x[n]z^{-n}$, ROC rings, and Time-Shifting property for causal difference equations",
+                "Z-domain Initial/Final Value Theorems and unit-circle stability criterion ($|p_k| < 1$)"
+              ]
+            }
+          ]
+        },
+        "ECEPC-314": {
+          title: "ECEPC-314 • Network Theory",
+          units: [
+            {
+              unit: "Unit I — Graph Theory & Transient Analysis",
+              items: [
+                "Fundamental KCL ($A \cdot I_b = 0$), KVL ($B \cdot V_b = 0$), and orthogonality relation ($A \cdot B^T = 0$) from incidence, tie-set, and cut-set matrices",
+                "Time-domain and s-domain transient response of source-free and step-excited RL ($i(t) = I_0 e^{-Rt/L}$) and RC ($v(t) = V_0 e^{-t/RC}$) circuits",
+                "Second-order series & parallel RLC natural response ($s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_0^2}$): Overdamped, Critically Damped, and Underdamped cases",
+                "Laplace-transformed equivalent models of inductors ($sL I(s) - Li(0^-)$) and capacitors ($\frac{V(s)}{s} + \frac{v(0^-)}{s}$)"
+              ]
+            },
+            {
+              unit: "Unit II — AC Network Theorems",
+              items: [
+                "Proof of Maximum Power Transfer Theorem for AC circuits: $Z_L = Z_S^*$ ($R_L = R_S, X_L = -X_S$) and $P_{\max} = \frac{|V_{\text{th}}|^2}{8 R_S}$",
+                "Proof of Reciprocity Theorem, Superposition Theorem, and Millman's Theorem for parallel voltage sources",
+                "Proof of Tellegen's Theorem ($\sum_{k=1}^b v_k i_k = 0$) and Substitution / Compensation Theorem"
+              ]
+            },
+            {
+              unit: "Unit III — Resonance & Magnetically Coupled Circuits",
+              items: [
+                "Series RLC resonance condition ($\omega_0 = \frac{1}{\sqrt{LC}}$), Quality Factor ($Q = \frac{\omega_0 L}{R} = \frac{1}{R}\sqrt{\frac{L}{C}}$), half-power frequencies $\omega_{1,2}$, and Bandwidth ($\text{BW} = \frac{R}{L} = \frac{\omega_0}{Q}$)",
+                "Parallel tank resonant frequency $\omega_0 = \sqrt{\frac{1}{LC} - \frac{R^2}{L^2}}$ and dynamic impedance $Z_d = \frac{L}{CR}$",
+                "Coefficient of coupling $k = \frac{M}{\sqrt{L_1 L_2}} \le 1$ via stored magnetic energy $W = \frac{1}{2}L_1 i_1^2 + \frac{1}{2}L_2 i_2^2 \pm M i_1 i_2 \ge 0$",
+                "Equivalent T-network ($L_1 - M, L_2 - M, M$) and reflected impedance $Z_{\text{ref}} = \frac{\omega^2 M^2}{Z_{22}}$ for coupled coils"
+              ]
+            },
+            {
+              unit: "Unit IV — Two-Port Networks & Network Synthesis",
+              items: [
+                "Defining equations and open/short-circuit parameter derivations for Z, Y, ABCD (Transmission), and h-parameters",
+                "Symmetry and Reciprocity conditions across all 4 two-port parameter sets ($Z_{11}=Z_{22}, Z_{12}=Z_{21}$; $AD - BC = 1$; $\Delta_h = 1$)",
+                "Overall parameter derivations for Cascade ($[T] = [T_a][T_b]$), Series ($[Z] = [Z_a]+[Z_b]$), and Parallel ($[Y] = [Y_a]+[Y_b]$) interconnections",
+                "Foster I, Foster II, Cauer I, and Cauer II canonical synthesis expansions for lossless LC and RC driving-point immittance functions"
+              ]
+            }
+          ]
+        }
+      };
+
+      // -----------------------------------------------------------------------
+      // 3. STATE & THEME PERSISTENCE
+      // -----------------------------------------------------------------------
+      const THEME_KEY = 'btech-nep-theme';
+      const PARETO_CHECK_KEY = 'btech-nep-pareto-checked';
+
+      const root = document.documentElement;
+      const toggleBtn = document.getElementById('theme-toggle');
+      const iconSun = document.getElementById('icon-sun');
+      const iconMoon = document.getElementById('icon-moon');
+
+      const btnPareto = document.getElementById('btn-pareto');
+      const btnDerivations = document.getElementById('btn-derivations');
+      const panelPareto = document.getElementById('panel-pareto');
+      const panelDerivations = document.getElementById('panel-derivations');
+
+      let activePanel = null; // 'pareto' | 'derivations' | null
+      let activeParetoSub = 'ECEPC-311';
+      let activeDerivSub = 'ECEPC-311';
+      let checkedTopics = new Set();
+
+      try {
+        const savedChecks = JSON.parse(localStorage.getItem(PARETO_CHECK_KEY) || '[]');
+        checkedTopics = new Set(savedChecks);
+      } catch (e) {
+        checkedTopics = new Set();
+      }
+
+      function saveChecks() {
+        try {
+          localStorage.setItem(PARETO_CHECK_KEY, JSON.stringify([...checkedTopics]));
+        } catch (e) {}
+      }
+
+      function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        root.classList.toggle('dark', isDark);
+        iconSun.classList.toggle('hidden', !isDark);
+        iconMoon.classList.toggle('hidden', isDark);
+      }
+
+      try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          applyTheme(savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          applyTheme('dark');
+        } else {
+          applyTheme('light');
+        }
+      } catch (e) {
+        applyTheme('light');
+      }
+
+      toggleBtn.addEventListener('click', function () {
+        const nextTheme = root.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(nextTheme);
+        try {
+          localStorage.setItem(THEME_KEY, nextTheme);
+        } catch (e) {}
+      });
+
+      // -----------------------------------------------------------------------
+      // 4. PANEL TOGGLING & RENDERING
+      // -----------------------------------------------------------------------
+      window.closePanels = function () {
+        activePanel = null;
+        panelPareto.classList.add('hidden');
+        panelDerivations.classList.add('hidden');
+        btnPareto.classList.remove('active');
+        btnDerivations.classList.remove('active');
+        btnPareto.setAttribute('aria-expanded', 'false');
+        btnDerivations.setAttribute('aria-expanded', 'false');
+      };
+
+      function openPanel(name) {
+        if (activePanel === name) {
+          closePanels();
+          return;
+        }
+        closePanels();
+        activePanel = name;
+        if (name === 'pareto') {
+          panelPareto.classList.remove('hidden');
+          btnPareto.classList.add('active');
+          btnPareto.setAttribute('aria-expanded', 'true');
+          renderPareto();
+          panelPareto.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else if (name === 'derivations') {
+          panelDerivations.classList.remove('hidden');
+          btnDerivations.classList.add('active');
+          btnDerivations.setAttribute('aria-expanded', 'true');
+          renderDerivations();
+          panelDerivations.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      btnPareto.addEventListener('click', () => openPanel('pareto'));
+      btnDerivations.addEventListener('click', () => openPanel('derivations'));
+
+      window.selectParetoSub = function (subKey) {
+        activeParetoSub = subKey;
+        renderPareto();
+      };
+
+      window.toggleParetoTopic = function (topicId) {
+        if (checkedTopics.has(topicId)) {
+          checkedTopics.delete(topicId);
+        } else {
+          checkedTopics.add(topicId);
+        }
+        saveChecks();
+        renderPareto();
+      };
+
+      function getTierBadgeStyle(tier) {
+        if (tier === 'Must Do') {
+          return 'background-color: var(--accent-soft); color: var(--accent);';
+        }
+        if (tier === 'Should Do') {
+          return 'background-color: var(--amber-soft); color: var(--amber);';
+        }
+        return 'background-color: var(--muted-badge); color: var(--ink-secondary);';
+      }
+
+      function renderPareto() {
+        const tabsEl = document.getElementById('pareto-subject-tabs');
+        const listEl = document.getElementById('pareto-list');
+        const progEl = document.getElementById('pareto-progress');
+
+        tabsEl.innerHTML = Object.keys(PARETO_DATA)
+          .map((key) => {
+            const isActive = key === activeParetoSub;
+            return `<button type="button" onclick="selectParetoSub('${key}')" class="sub-pill px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap cursor-pointer ${isActive ? 'active' : ''}">${key}</button>`;
+          })
+          .join('');
+
+        const current = PARETO_DATA[activeParetoSub];
+        const doneCount = current.topics.filter((t) => checkedTopics.has(t.id)).length;
+        progEl.textContent = `${doneCount} / ${current.topics.length} Done`;
+
+        listEl.innerHTML = current.topics
+          .map((item, idx) => {
+            const isChecked = checkedTopics.has(item.id);
+            return `
+              <label class="item-row flex items-start gap-3 p-3.5 rounded-2xl cursor-pointer select-none ${isChecked ? 'opacity-65' : ''}">
+                <input
+                  type="checkbox"
+                  ${isChecked ? 'checked' : ''}
+                  onchange="toggleParetoTopic('${item.id}')"
+                  class="mt-0.5 w-4 h-4 rounded accent-[#B85D3B] cursor-pointer shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full" style="${getTierBadgeStyle(item.tier)}">
+                      ${item.tier}
+                    </span>
+                    <span class="text-[11px] font-semibold" style="color: var(--ink-secondary);">
+                      #${idx + 1} • ${item.unit}
+                    </span>
+                  </div>
+                  <p class="text-xs sm:text-sm font-medium leading-snug ${isChecked ? 'line-through' : ''}">
+                    ${item.title}
+                  </p>
+                </div>
+              </label>
+            `;
+          })
+          .join('');
+      }
+
+      window.selectDerivSub = function (subKey) {
+        activeDerivSub = subKey;
+        renderDerivations();
+      };
+
+      function renderDerivations() {
+        const tabsEl = document.getElementById('deriv-subject-tabs');
+        const contentEl = document.getElementById('deriv-content');
+
+        tabsEl.innerHTML = Object.keys(DERIVATIONS_DATA)
+          .map((key) => {
+            const isActive = key === activeDerivSub;
+            return `<button type="button" onclick="selectDerivSub('${key}')" class="sub-pill px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap cursor-pointer ${isActive ? 'active' : ''}">${DERIVATIONS_DATA[key].title}</button>`;
+          })
+          .join('');
+
+        const subData = DERIVATIONS_DATA[activeDerivSub];
+        contentEl.innerHTML = subData.units
+          .map((u) => {
+            const listItems = u.items
+              .map(
+                (d) => `
+                  <li class="text-xs sm:text-[13px] leading-relaxed flex items-start gap-2">
+                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background-color: var(--accent);"></span>
+                    <span>${d}</span>
+                  </li>
+                `
+              )
+              .join('');
+
+            return `
+              <div class="item-row rounded-2xl p-4 sm:p-5">
+                <h3 class="text-xs sm:text-sm font-bold tracking-tight mb-3 pb-2 border-b" style="border-color: var(--border-card); color: var(--accent);">
+                  ${u.unit}
+                </h3>
+                <ul class="space-y-2 list-none p-0 m-0">
+                  ${listItems}
+                </ul>
+              </div>
+            `;
+          })
+          .join('');
+      }
+    })();
+  </script>
+</body>
+</html>
