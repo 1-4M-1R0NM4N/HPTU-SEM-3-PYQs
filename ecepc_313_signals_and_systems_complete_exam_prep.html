@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECEPC-313 / EC-304 — Signals &amp; Systems PYQ Explorer &amp; Diagram Viewer</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #FAF6F0;
+      --bg-secondary: #F3ECE1;
+      --bg-elevated: #FFFDF9;
+      --border-subtle: #E2D6C5;
+      --border-strong: #CBBBA4;
+      --text-primary: #2C241E;
+      --text-secondary: #53463C;
+      --text-muted: #6E5D4F;
+      --accent: #B85D3B;
+      --accent-hover: #9E4B2C;
+      --accent-soft: #F5E4DC;
+      --sage: #3B6E5C;
+      --sage-soft: #E3EFEA;
+      --amber: #A66E28;
+      --amber-soft: #F7ECDA;
+      --shadow-card: 0 2px 10px rgba(44, 36, 30, 0.05);
+    }
+
+    html.dark {
+      --bg-primary: #1C1917;
+      --bg-secondary: #26221F;
+      --bg-elevated: #2E2925;
+      --border-subtle: #3F3832;
+      --border-strong: #574D45;
+      --text-primary: #EAE2D6;
+      --text-secondary: #C7BBAE;
+      --text-muted: #A89B8C;
+      --accent: #E09F5A;
+      --accent-hover: #EDA964;
+      --accent-soft: #382B20;
+      --sage: #6BA38E;
+      --sage-soft: #21332E;
+      --amber: #E5B567;
+      --amber-soft: #362C1E;
+      --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.2s ease, color 0.2s ease;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .surface-primary { background-color: var(--bg-primary); }
+    .surface-secondary { background-color: var(--bg-secondary); border-color: var(--border-subtle); }
+    .surface-elevated { background-color: var(--bg-elevated); border-color: var(--border-subtle); box-shadow: var(--shadow-card); }
+    .text-main { color: var(--text-primary); }
+    .text-sub { color: var(--text-secondary); }
+    .text-muted-warm { color: var(--text-muted); }
+    .border-warm { border-color: var(--border-subtle); }
+    .border-warm-strong { border-color: var(--border-strong); }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: #FFFDF9;
+      transition: all 0.15s ease;
+    }
+    html.dark .btn-accent {
+      color: #1C1917;
+      font-weight: 600;
+    }
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-outline-warm {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      transition: all 0.15s ease;
+    }
+    .btn-outline-warm:hover {
+      background-color: var(--bg-secondary);
+    }
+
+    .badge-accent {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .badge-sage {
+      background-color: var(--sage-soft);
+      color: var(--sage);
+    }
+
+    .badge-amber {
+      background-color: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Smooth PDF canvas container */
+    #pdfCanvasContainer {
+      background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* PDF Night Invert filter for dark room reading */
+    #pdfCanvas.pdf-inverted {
+      filter: invert(0.91) hue-rotate(180deg) contrast(0.94) sepia(0.08);
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #FFFFFF !important; color: #111111 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Sticky Top Navigation Bar -->
+  <header class="sticky top-0 z-40 surface-secondary border-b border-warm backdrop-blur-md bg-opacity-95 no-print">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Course Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
+          SS
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-main">
+              Signals &amp; Systems PYQ Explorer
+            </h1>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full badge-accent">
+              ECEPC-313 / EC-304
+            </span>
+          </div>
+          <p class="text-xs text-muted-warm hidden sm:block">
+            HPTU NEP Syllabus Mapped • 6 Paper Sets (Incl. EE-223 Sem 4) • 25 Pages Indexed • One-Click Diagram Viewer
+          </p>
+        </div>
+      </div>
+
+      <!-- Controls: PDF Status/Upload, Mastery Pill, Focus Mode, PDF Pane Toggle, Theme Toggle -->
+      <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+        <!-- PDF Status Pill -->
+        <div id="pdfStatusBadge" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl badge-amber border border-warm text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full animate-pulse" style="background-color: var(--amber);"></span>
+          <span>Connecting PDF...</span>
+        </div>
+
+        <!-- Upload / Change PDF Button -->
+        <label for="pdfFileInput" class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl btn-outline-warm text-xs font-semibold" title="Load or replace Signal_and_Systems_1_Page_Per_Sheet.pdf">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <span id="uploadBtnText">Upload PDF</span>
+        </label>
+        <input type="file" id="pdfFileInput" accept="application/pdf" class="hidden" />
+
+        <!-- Mastery Progress Counter Pill -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl surface-elevated border border-warm text-xs">
+          <span class="text-muted-warm font-medium">Mastered:</span>
+          <span id="mastery-counter" class="font-bold text-main">0 / 74</span>
+          <div class="w-12 sm:w-14 h-2 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden hidden sm:block">
+            <div id="mastery-bar" class="h-full transition-all duration-300" style="width: 0%; background-color: var(--sage);"></div>
+          </div>
+        </div>
+
+        <!-- Toggle Split PDF Viewer Pane -->
+        <button
+          id="toggleViewerBtn"
+          type="button"
+          onclick="togglePdfPane()"
+          class="px-3 py-1.5 rounded-xl text-xs font-semibold btn-outline-warm flex items-center gap-1.5 cursor-pointer"
+          title="Toggle Embedded Split-Screen PDF Diagram Viewer"
+        >
+          <svg class="w-4 h-4" style="color: var(--accent);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+          </svg>
+          <span id="toggleViewerLabel">Show PDF Pane</span>
+        </button>
+
+        <!-- Single-Question Distraction-Free Focus Mode Toggle -->
+        <button
+          id="btn-focus-mode"
+          type="button"
+          class="px-3.5 py-1.5 rounded-xl text-xs font-semibold btn-outline-warm flex items-center gap-1.5 cursor-pointer"
+          title="Switch between List Mode and single-question distraction-free Focus Mode"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <span id="focus-mode-label">Focus Mode</span>
+        </button>
+
+        <!-- Warm Light / Sepia Charcoal Dark Theme Toggle -->
+        <button
+          id="btn-theme-toggle"
+          type="button"
+          class="p-2 rounded-xl btn-outline-warm cursor-pointer"
+          aria-label="Toggle warm light or dark mode"
+          title="Toggle Warm Parchment Light / Sepia Charcoal Dark Theme"
+        >
+          <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4" />
+            <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
+          </svg>
+          <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Unit Category Tabs Bar -->
+    <div class="border-t border-warm surface-secondary">
+      <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar" id="unitTabsContainer">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Drag & Drop Overlay when dragging PDF file anywhere over window -->
+  <div id="dropZoneOverlay" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex-col items-center justify-center p-6 text-white">
+    <div class="max-w-md w-full border-2 border-dashed rounded-3xl p-10 text-center surface-elevated text-main shadow-2xl" style="border-color: var(--accent);">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl badge-accent flex items-center justify-center">
+        <svg class="w-9 h-9" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold mb-1">Drop Your PYQ PDF Here</h2>
+      <p class="text-sm text-sub">Release to load <span class="font-mono-code font-semibold text-main">Signal_and_Systems_1_Page_Per_Sheet.pdf</span> into the instant page &amp; diagram viewer.</p>
+    </div>
+  </div>
+
+  <!-- Upload Prompt Modal (triggered if user clicks "View Diagram" before PDF is loaded) -->
+  <div id="uploadPromptModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="surface-elevated rounded-2xl max-w-md w-full p-6 shadow-2xl border border-warm">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl badge-accent flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-main">Load PYQ PDF to View Diagram</h3>
+            <p class="text-xs text-muted-warm" id="modalTargetPageText">Target: Page 1</p>
+          </div>
+        </div>
+        <button onclick="closeUploadModal()" class="text-muted-warm hover:text-main p-1 rounded-lg cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-sm text-sub mb-5 leading-relaxed">
+        Select your <span class="font-mono-code text-xs surface-secondary px-1.5 py-0.5 rounded font-semibold text-main border border-warm">Signal_and_Systems_1_Page_Per_Sheet.pdf</span> file once (or drag &amp; drop it anywhere). It stays locally in your browser and jumps straight to <span id="modalTargetPageInline" class="font-bold" style="color: var(--accent);">Page 1</span>!
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-2.5">
+        <label for="pdfFileInput" class="flex-1 cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl btn-accent text-sm font-semibold shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Choose PDF File
+        </label>
+        <button onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl btn-outline-warm text-sm font-semibold cursor-pointer">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Workspace Container (Split-Screen capable in both List Mode & Focus Mode) -->
+  <div class="max-w-[1600px] w-full mx-auto flex flex-col lg:flex-row flex-1">
+
+    <!-- LEFT COLUMN: List View OR Single-Question Focus View -->
+    <main id="questionsColumn" class="w-full transition-all duration-300 px-4 sm:px-6 py-5">
+
+      <!-- Fallback Banner if backend PDF could not be auto-fetched (e.g., opened via file://) -->
+      <div id="welcomeUploadBanner" class="hidden mb-5 p-4 rounded-2xl surface-secondary border border-warm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-start sm:items-center gap-3">
+          <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-main">One-Click Waveform, Block Diagram &amp; Page Jumper Ready</h2>
+            <p class="text-xs text-sub">Load <span class="font-mono-code font-semibold text-main">Signal_and_Systems_1_Page_Per_Sheet.pdf</span> (or drag &amp; drop anywhere) so clicking <strong>"View Diagram"</strong> opens the exact PDF page side-by-side.</p>
+          </div>
+        </div>
+        <label for="pdfFileInput" class="cursor-pointer shrink-0 px-3.5 py-2 rounded-xl btn-outline-warm text-xs font-bold">
+          Select PDF Now →
+        </label>
+      </div>
+
+      <!-- LIST MODE VIEW -->
+      <div id="list-view-container">
+        <!-- Search & Filter Controls Card -->
+        <div class="surface-elevated rounded-2xl border border-warm p-3.5 sm:p-4 mb-5">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+            <!-- Search Input -->
+            <div class="md:col-span-5 relative">
+              <svg class="w-4 h-4 text-muted-warm absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search Fourier, Laplace, Z-transform, Sampling, Convolution, EE-223..."
+                class="w-full pl-10 pr-8 py-2 rounded-xl surface-primary border border-warm text-sm text-main placeholder:text-muted-warm focus:outline-none focus:border-warm-strong transition"
+              />
+              <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-warm hover:text-main p-1 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Paper Filter Dropdown -->
+            <div class="md:col-span-4">
+              <select id="paperSelect" class="w-full px-3 py-2 rounded-xl surface-primary border border-warm text-sm text-main font-medium focus:outline-none focus:border-warm-strong transition">
+                <option value="ALL">All Exam Papers (6 Paper Sets / 25 Pages)</option>
+                <option value="Dec-24-0096">Dec-24-0096 (ECEPC-313 • NEP Latest) [Pg 1–3]</option>
+                <option value="Dec-22-0137">Dec-22-0137 (EC-304) [Pg 4–6]</option>
+                <option value="July-22-00239">July-22-00239 (EC-304) [Pg 6–10]</option>
+                <option value="Sep-21-00035">Sep-21-00035 (EC-304) [Pg 10–13]</option>
+                <option value="16100(D)">16100(D) (EC-304 • Sem 3) [Pg 14–17]</option>
+                <option value="EE-223-Set">EE-223 Paper Set (Sem 4 • Signals &amp; Systems) [Pg 18–25]</option>
+              </select>
+            </div>
+
+            <!-- Diagram Questions Only Toggle -->
+            <div class="md:col-span-3 flex items-center justify-between md:justify-end gap-2">
+              <label class="inline-flex items-center gap-2.5 cursor-pointer select-none px-3 py-2 rounded-xl surface-secondary border border-warm transition w-full md:w-auto justify-center">
+                <input type="checkbox" id="diagramOnlyToggle" class="sr-only peer" />
+                <div class="w-9 h-5 bg-black/20 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all relative" id="diagramToggleTrack"></div>
+                <span class="text-xs font-semibold text-main">Diagrams Only</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Active Unit Syllabus Description & Stats Strip -->
+          <div class="mt-3 pt-3 border-t border-warm flex flex-wrap items-center justify-between gap-2 text-xs">
+            <p id="unitDescriptionText" class="text-sub font-medium">
+              Complete bank of 6 HPTU PYQ paper sets (25 pages, including EE-223 Sem 4) mapped to ECEPC-313 Units I–IV &amp; Out-of-Syllabus topics.
+            </p>
+            <div class="flex items-center gap-3 shrink-0">
+              <span id="resultCountBadge" class="px-2.5 py-1 rounded-lg badge-accent font-bold">0 Questions</span>
+              <button onclick="resetAllFilters()" id="resetFiltersBtn" class="hidden text-muted-warm hover:text-main font-semibold underline cursor-pointer">
+                Reset filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Questions Feed Container -->
+        <div id="questionsList" class="space-y-3.5 pb-10">
+          <!-- Rendered dynamically via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden surface-elevated rounded-2xl border border-warm p-12 text-center">
+          <div class="w-12 h-12 rounded-2xl surface-secondary text-muted-warm flex items-center justify-center mx-auto mb-3 border border-warm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-main mb-1">No matching questions found</h3>
+          <p class="text-sm text-sub mb-4">Try clearing your search term, switching the Unit tab, or turning off "Diagrams Only".</p>
+          <button onclick="resetAllFilters()" class="px-4 py-2 rounded-xl btn-accent text-xs font-semibold cursor-pointer">
+            Reset All Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- SINGLE-QUESTION DISTRACTION-FREE FOCUS MODE VIEW -->
+      <div id="focus-view-container" class="hidden pb-10">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </main>
+
+    <!-- RIGHT COLUMN / SLIDE-OVER DRAWER: Embedded PDF Page & Diagram Viewer -->
+    <aside id="pdfViewerPane" class="hidden fixed inset-0 z-40 lg:static lg:z-auto lg:w-[48%] xl:w-[50%] surface-secondary flex-col border-l border-warm lg:h-[calc(100vh-114px)] lg:sticky lg:top-[114px]">
+
+      <!-- PDF Viewer Toolbar -->
+      <div class="surface-secondary px-3 sm:px-4 py-2.5 border-b border-warm flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <!-- Page Navigation -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="changePdfPage(-1)" id="prevPageBtn" class="p-1.5 rounded-lg btn-outline-warm disabled:opacity-40 cursor-pointer" title="Previous PDF Page">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-1.5 surface-elevated border border-warm px-2.5 py-1 rounded-lg text-xs font-mono-code">
+            <span class="text-muted-warm">Page</span>
+            <input type="number" id="pageNumberInput" min="1" max="25" value="1" class="w-11 surface-primary border border-warm rounded px-1.5 py-0.5 text-center text-main font-bold focus:outline-none" />
+            <span class="text-muted-warm">/ <span id="totalPagesSpan">25</span></span>
+          </div>
+
+          <button onclick="changePdfPage(1)" id="nextPageBtn" class="p-1.5 rounded-lg btn-outline-warm disabled:opacity-40 cursor-pointer" title="Next PDF Page">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Zoom, Night Invert & Close Controls -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="adjustZoom(-0.2)" class="p-1.5 rounded-lg btn-outline-warm cursor-pointer" title="Zoom Out">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+          <span id="zoomLevelLabel" class="text-xs font-mono-code text-main w-11 text-center font-semibold">100%</span>
+          <button onclick="adjustZoom(0.2)" class="p-1.5 rounded-lg btn-outline-warm cursor-pointer" title="Zoom In">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+          <button onclick="fitPdfWidth()" class="px-2 py-1 rounded-lg btn-outline-warm text-xs font-semibold cursor-pointer" title="Fit to Pane Width">
+            Fit
+          </button>
+          <button onclick="togglePdfInvert()" id="pdfInvertBtn" class="px-2 py-1 rounded-lg btn-outline-warm text-xs font-semibold cursor-pointer" title="Invert PDF Page Colors for Night Reading">
+            Invert
+          </button>
+          <button onclick="closePdfPane()" class="ml-0.5 p-1.5 rounded-lg badge-accent hover:opacity-85 cursor-pointer" title="Close PDF Viewer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Question Reference Banner inside PDF Viewer -->
+      <div id="activeQuestionContextBar" class="hidden surface-elevated border-b border-warm px-4 py-2.5 flex items-start justify-between gap-3 shrink-0">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-0.5">
+            <span id="viewerActivePaperBadge" class="px-2 py-0.5 rounded btn-accent text-[11px] font-bold font-mono-code">Dec-24-0096</span>
+            <span id="viewerActiveQNumBadge" class="text-xs font-bold text-main">Q1 • Page 1</span>
+          </div>
+          <p id="viewerActiveQSummary" class="text-xs text-sub truncate">Viewing question page 1</p>
+        </div>
+        <span class="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-lg badge-sage border border-warm text-[11px] font-semibold">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Page Synced
+        </span>
+      </div>
+
+      <!-- Canvas Scroll Area -->
+      <div id="pdfCanvasContainer" class="flex-1 overflow-auto p-4 flex flex-col items-center justify-start surface-primary relative">
+        <!-- Empty Placeholder inside PDF Pane if no file loaded -->
+        <div id="pdfPaneEmptyPlaceholder" class="my-auto max-w-sm text-center p-6 rounded-2xl surface-elevated border border-warm shadow-xl">
+          <div class="w-12 h-12 rounded-2xl badge-accent flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-sm font-bold text-main mb-1">No PDF Loaded Yet</h3>
+          <p class="text-xs text-sub mb-4">Upload <span class="font-mono-code text-main font-semibold">Signal_and_Systems_1_Page_Per_Sheet.pdf</span> (or place it in the repo root) to inspect waveforms &amp; diagrams directly on each page.</p>
+          <label for="pdfFileInput" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl btn-accent text-xs font-semibold">
+            Upload PDF File
+          </label>
+        </div>
+
+        <!-- Rendered PDF Page Canvas -->
+        <canvas id="pdfCanvas" class="hidden shadow-2xl rounded-lg bg-white max-w-none"></canvas>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-warm surface-secondary py-4 px-4 sm:px-6 text-xs text-muted-warm no-print">
+    <div class="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>
+        <strong class="text-main">ECEPC-313 / EC-304 / EE-223</strong> • HPTU Signals &amp; Systems Complete PYQ Vault &amp; Diagram Viewer (25 Pages Indexed)
+      </div>
+      <div>
+        Focus Mode Shortcuts: <kbd class="px-1.5 py-0.5 rounded border border-warm font-mono-code text-[11px]">←</kbd> Prev, <kbd class="px-1.5 py-0.5 rounded border border-warm font-mono-code text-[11px]">→</kbd> Next, <kbd class="px-1.5 py-0.5 rounded border border-warm font-mono-code text-[11px]">Space</kbd> Open Diagram in PDF
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Complete 25-Page Syllabus-Verified PYQ Dataset -->
+  <script>
+    // Configure PDF.js worker
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // Backend GitHub repo PDF filename
+    const REPO_PDF_FILENAME = 'Signal_and_Systems_1_Page_Per_Sheet.pdf';
+
+    // Storage keys
+    const STORAGE_KEYS = {
+      THEME: 'ecepc313_warm_theme',
+      SOLVED: 'ecepc313_solved_ids',
+      NOTES: 'ecepc313_focus_notes',
+      PDF_INVERT: 'ecepc313_pdf_invert'
+    };
+
+    // =========================================================================
+    // 1. SYLLABUS UNITS METADATA (Official HPTU ECEPC-313 NEP + EE-223 OOS)
+    // =========================================================================
+    const UNITS = [
+      {
+        id: 'ALL',
+        shortLabel: 'All Questions',
+        badge: 'All',
+        description: 'Complete bank of 6 HPTU PYQ paper sets (25 pages, including EE-223 Sem 4) verified against ECEPC-313 Units I–IV & Out-of-Syllabus topics.'
+      },
+      {
+        id: 'UNIT_1',
+        shortLabel: 'Unit I: Signals & Systems',
+        badge: 'Unit I',
+        description: 'Unit I: Representation & Classification of Signals & Systems — Unit step, impulse, sinusoid, complex exponential, time-limited signals, basic signal operations, linearity, time-invariance, periodicity, causality, stability, memory/memoryless.'
+      },
+      {
+        id: 'UNIT_2',
+        shortLabel: 'Unit II: Fourier Series & FT',
+        badge: 'Unit II',
+        description: 'Unit II: Fourier Series (Trigonometric & Exponential, Dirichlet’s conditions, Complex Fourier spectrum, properties) & Fourier Transform (arbitrary, standard & periodic signals, properties, impulse & signum functions).'
+      },
+      {
+        id: 'UNIT_3',
+        shortLabel: 'Unit III: LTI & Laplace',
+        badge: 'Unit III',
+        description: 'Unit III: LTI Systems (Convolution sum & integral, causality & stability) & Continuous-Time System Analysis using Laplace Transform (ROC, properties, transfer function & characterization).'
+      },
+      {
+        id: 'UNIT_4',
+        shortLabel: 'Unit IV: Z-Transform & Sampling',
+        badge: 'Unit IV',
+        description: 'Unit IV: Discrete-Time System Analysis using Z-Transform (ROC, properties, inverse Z-transform, LTI characterization) & Signal Sampling (Sampling Theorem, spectra, ideal/ZOH/FOH reconstruction, aliasing, CT–DT relation).'
+      },
+      {
+        id: 'OUT_OF_SYLLABUS',
+        shortLabel: 'Out of Syllabus (EE-223 / Legacy)',
+        badge: 'Out of Syllabus',
+        description: 'Out of Syllabus for NEP ECEPC-313 (From EE-223 Sem 4 & Legacy Papers): State-Space / State-Variable analysis, Controllability/Observability, DFT/FFT algorithms, and Analog/Digital IIR & FIR Filter Design.'
+      }
+    ];
+
+    // =========================================================================
+    // 2. COMPLETE 25-PAGE PYQ DATABASE (Verified against ECEPC-313 Syllabus)
+    // =========================================================================
+    const PYQ_DATA = [
+      // -------------------- PAPER 1: Dec-24-0096 (ECEPC-313 • NEP Latest) [Pages 1-3] --------------------
+      {
+        id: 'd24-q1-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q1(a)',
+        marks: '6',
+        unit: 'UNIT_1',
+        page: 1,
+        hasDiagram: false,
+        text: 'Explain basic operations on signals (time-shifting, time-scaling, time-reversal, amplitude scaling, and signal addition/multiplication) with suitable mathematical expressions and examples.'
+      },
+      {
+        id: 'd24-q1-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q1(b)',
+        marks: '6',
+        unit: 'UNIT_1',
+        page: 1,
+        hasDiagram: false,
+        text: 'Check whether the given continuous-time and discrete-time systems are linear, time-invariant, causal, and BIBO stable.'
+      },
+      {
+        id: 'd24-q2-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q2(a)',
+        marks: '6',
+        unit: 'UNIT_1',
+        page: 1,
+        hasDiagram: false,
+        text: 'Define unit impulse δ(t), unit step u(t), complex exponential e<sup>st</sup>, and energy/power signals. Determine whether the given signal is an energy signal or a power signal.'
+      },
+      {
+        id: 'd24-q2-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q2(b)',
+        marks: '6',
+        unit: 'UNIT_1',
+        page: 1,
+        hasDiagram: false,
+        text: 'Determine the fundamental period T or N of the given periodic continuous-time and discrete-time sinusoidal/complex exponential signals.'
+      },
+      {
+        id: 'd24-q3-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q3(a)',
+        marks: '6',
+        unit: 'UNIT_2',
+        page: 1,
+        hasDiagram: false,
+        text: 'State Dirichlet’s conditions for the existence of a Fourier series and derive the relation between Trigonometric and Exponential Fourier series coefficients.'
+      },
+      {
+        id: 'd24-q3-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q3(b)',
+        marks: '6',
+        unit: 'UNIT_2',
+        page: 2,
+        hasDiagram: true,
+        diagramLabel: 'Fig. 1 (Page 2): Periodic waveform for Exponential Fourier Series & Complex Spectrum',
+        scanNote: 'Verify waveform symmetry, amplitude, and period boundaries directly on PDF Page 2.',
+        text: 'Obtain the exponential Fourier series expansion for the periodic waveform shown on Page 2 and plot its magnitude and phase spectrum.'
+      },
+      {
+        id: 'd24-q4-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q4(a)',
+        marks: '6',
+        unit: 'UNIT_2',
+        page: 2,
+        hasDiagram: false,
+        text: 'Derive the Fourier Transform from the Exponential Fourier Series and find the Fourier Transform of the signum function sgn(t) and unit step function u(t).'
+      },
+      {
+        id: 'd24-q4-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q4(b)',
+        marks: '6',
+        unit: 'UNIT_2',
+        page: 2,
+        hasDiagram: true,
+        diagramLabel: 'Fig. 2 (Page 2): Time-limited pulse signal x(t) for Fourier Transform evaluation',
+        scanNote: 'Confirm pulse width and amplitude ticks on PDF Page 2 before integrating.',
+        text: 'Using properties of the Fourier Transform (linearity, time-shifting, differentiation), determine X(jω) for the time-limited pulse signal sketched on Page 2.'
+      },
+      {
+        id: 'd24-q5-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q5(a)',
+        marks: '6',
+        unit: 'UNIT_3',
+        page: 2,
+        hasDiagram: false,
+        text: 'Evaluate the continuous-time convolution integral y(t) = x(t) * h(t) for x(t) = e<sup>−at</sup>u(t) and h(t) = u(t) − u(t − T).'
+      },
+      {
+        id: 'd24-q5-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q5(b)',
+        marks: '6',
+        unit: 'UNIT_3',
+        page: 2,
+        hasDiagram: false,
+        text: 'State the conditions for causality and BIBO stability of a continuous-time LTI system in terms of its impulse response h(t) and transfer function H(s).'
+      },
+      {
+        id: 'd24-q6-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q6(a)',
+        marks: '6',
+        unit: 'UNIT_3',
+        page: 2,
+        hasDiagram: false,
+        text: 'Find the unilateral/bilateral Laplace transform and specify the Region of Convergence (ROC) for x(t) = e<sup>−2t</sup>u(t) + e<sup>−3t</sup>u(t).'
+      },
+      {
+        id: 'd24-q6-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q6(b)',
+        marks: '6',
+        unit: 'UNIT_3',
+        page: 3,
+        hasDiagram: false,
+        text: 'A causal continuous-time LTI system is described by d²y(t)/dt² + 5 dy(t)/dt + 6 y(t) = dx(t)/dt + 2 x(t). Determine its transfer function H(s) and impulse response h(t).'
+      },
+      {
+        id: 'd24-q7-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q7(a)',
+        marks: '6',
+        unit: 'UNIT_4',
+        page: 3,
+        hasDiagram: false,
+        text: 'State and prove the Sampling Theorem for band-limited continuous-time signals. Explain the phenomenon of aliasing and how it can be prevented.'
+      },
+      {
+        id: 'd24-q7-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q7(b)',
+        marks: '6',
+        unit: 'UNIT_4',
+        page: 3,
+        hasDiagram: false,
+        text: 'Compare signal reconstruction techniques: Ideal Low-Pass Interpolator, Zero-Order Hold (ZOH), and First-Order Hold (FOH).'
+      },
+      {
+        id: 'd24-q8-a',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q8(a)',
+        marks: '6',
+        unit: 'UNIT_4',
+        page: 3,
+        hasDiagram: false,
+        text: 'Find the Z-transform and sketch the Region of Convergence (ROC) of x[n] = (1/2)<sup>n</sup>u[n] − (1/3)<sup>n</sup>u[−n − 1].'
+      },
+      {
+        id: 'd24-q8-b',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q8(b)',
+        marks: '6',
+        unit: 'UNIT_4',
+        page: 3,
+        hasDiagram: false,
+        text: 'Determine the inverse Z-transform of X(z) = z / [(z − 1)(z − 0.5)] for |z| > 1 using partial fraction expansion and contour/power-series method.'
+      },
+      {
+        id: 'd24-q9',
+        paper: 'Dec-24-0096',
+        subjectCode: 'ECEPC-313',
+        qNum: 'Q9(i)–(vi)',
+        marks: '12',
+        unit: 'UNIT_4',
+        page: 3,
+        hasDiagram: false,
+        text: 'Compulsory Short-Answer Questions (6 × 2 Marks): (i) Define causal & anti-causal signals [Unit I]; (ii) State Parseval’s energy theorem [Unit II]; (iii) Fourier transform of δ(t − t₀) [Unit II]; (iv) Properties of ROC in Laplace transform [Unit III]; (v) Nyquist rate & Nyquist interval [Unit IV]; (vi) Relation between s-plane and z-plane [Unit IV].'
+      },
+
+      // -------------------- PAPER 2: Dec-22-0137 (EC-304) [Pages 4-6] --------------------
+      {
+        id: 'd22-q1-a',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(a)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 4,
+        hasDiagram: false,
+        text: 'Classify signals into continuous-time vs. discrete-time, deterministic vs. random, periodic vs. aperiodic, and even vs. odd signals with mathematical conditions.'
+      },
+      {
+        id: 'd22-q1-b',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(b)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 4,
+        hasDiagram: false,
+        text: 'Find the even and odd components of the signal x(t) = e<sup>−2t</sup>u(t) and verify energy decomposition.'
+      },
+      {
+        id: 'd22-q2-a',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(a)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 4,
+        hasDiagram: false,
+        text: 'Test the system y[n] = n x[n] + x[n − 1] for linearity, time-invariance, causality, memorylessness, and BIBO stability.'
+      },
+      {
+        id: 'd22-q2-b',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(b)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 4,
+        hasDiagram: false,
+        text: 'Compute the discrete-time convolution sum y[n] = x[n] * h[n] for x[n] = {1, 2, 3, 1} and h[n] = {1, −1, 2}.'
+      },
+      {
+        id: 'd22-q3-a',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 4,
+        hasDiagram: false,
+        text: 'State and prove the time-shifting, frequency-shifting, and time-differentiation properties of the Continuous-Time Fourier Transform.'
+      },
+      {
+        id: 'd22-q3-b',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 5,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 5): Periodic triangular / sawtooth waveform for Trigonometric Fourier Series',
+        scanNote: 'Check exact peak height and half-period symmetry on PDF Page 5.',
+        text: 'Determine the Trigonometric Fourier Series coefficients (a₀, a<sub>n</sub>, b<sub>n</sub>) for the periodic waveform illustrated on Page 5.'
+      },
+      {
+        id: 'd22-q4-a',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 5,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 5): Gate / rectangular pulse function rect(t/τ) for Fourier Transform',
+        scanNote: 'Verify pulse duration (−τ/2 to +τ/2) on PDF Page 5.',
+        text: 'Find the Fourier Transform of the rectangular gate pulse shown on Page 5 and sketch its sinc spectrum.'
+      },
+      {
+        id: 'd22-q4-b',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 5,
+        hasDiagram: false,
+        text: 'Obtain the Fourier Transform of a periodic impulse train δ<sub>T</sub>(t) = ∑ δ(t − kT).'
+      },
+      {
+        id: 'd22-q5-a',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q5(a)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 5,
+        hasDiagram: false,
+        text: 'State and prove the Initial Value Theorem and Final Value Theorem for the unilateral Laplace Transform.'
+      },
+      {
+        id: 'd22-q5-b',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q5(b)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 5,
+        hasDiagram: false,
+        text: 'Using Laplace Transform, find the step response of an LTI system whose transfer function is H(s) = (s + 4) / (s² + 5s + 6).'
+      },
+      {
+        id: 'd22-q6',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q6(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 5,
+        hasDiagram: false,
+        text: '(a) State and prove the convolution and time-shifting properties of the Z-transform. (b) Solve the difference equation y[n] − 0.5 y[n − 1] = (0.25)<sup>n</sup>u[n] with y[−1] = 0 using unilateral Z-transform.'
+      },
+      {
+        id: 'd22-q7',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q7(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 6,
+        hasDiagram: false,
+        text: '(a) Explain the spectrum of an ideally sampled signal and demonstrate under-sampling (aliasing), critical sampling, and over-sampling. (b) Determine the Nyquist rate for x(t) = 10 cos(100πt) + 5 sin(250πt).'
+      },
+      {
+        id: 'd22-q8',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q8(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 6,
+        hasDiagram: false,
+        text: '(a) Discuss the relationship between continuous-time and discrete-time systems via impulse invariance and step invariance. (b) Find the inverse Z-transform using long division method.'
+      },
+      {
+        id: 'd22-q9',
+        paper: 'Dec-22-0137',
+        subjectCode: 'EC-304',
+        qNum: 'Q9(a)–(g)',
+        marks: '14',
+        unit: 'UNIT_1',
+        page: 6,
+        hasDiagram: false,
+        text: 'Short-answer questions (Pg 6): (a) Sifting property of unit impulse δ(t), (b) BIBO stability criterion, (c) Convolution commutativity & associativity, (d) Complex Fourier spectrum, (e) ROC of finite-duration sequence, (f) Aliasing distortion, (g) Zero-order hold transfer function.'
+      },
+
+      // -------------------- PAPER 3: July-22-00239 (EC-304) [Pages 6-10] --------------------
+      {
+        id: 'j22-q1-a',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(a)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 6,
+        hasDiagram: false,
+        text: 'Explain continuous-time and discrete-time elementary signals: unit step, unit ramp, unit impulse, rectangular pulse, and sinc function.'
+      },
+      {
+        id: 'j22-q1-b',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(b)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 7,
+        hasDiagram: false,
+        text: 'Check whether the continuous-time system y(t) = ∫<sub>−∞</sub><sup>2t</sup> x(τ) dτ is linear, time-invariant, causal, and stable.'
+      },
+      {
+        id: 'j22-q2-a',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(a)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 7,
+        hasDiagram: false,
+        text: 'Derive the convolution integral for a continuous-time LTI system and prove that y(t) = x(t) * δ(t − t₀) = x(t − t₀).'
+      },
+      {
+        id: 'j22-q2-b',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(b)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 7,
+        hasDiagram: false,
+        text: 'Evaluate the graphical/analytical convolution of two rectangular pulses x(t) = u(t) − u(t − 2) and h(t) = u(t) − u(t − 3).'
+      },
+      {
+        id: 'j22-q3-a',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 7,
+        hasDiagram: false,
+        text: 'State and prove Parseval’s identity for periodic signals represented by Exponential Fourier Series.'
+      },
+      {
+        id: 'j22-q3-b',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 8,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 8): Full-wave / half-wave rectified periodic waveform for Fourier Series',
+        scanNote: 'Verify period T and peak voltage Vₘ on PDF Page 8.',
+        text: 'Calculate the Trigonometric Fourier Series coefficients for the periodic rectified waveform shown on Page 8.'
+      },
+      {
+        id: 'j22-q4-a',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 8,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 8): Triangular / trapezoidal signal x(t) for Fourier Transform',
+        scanNote: 'Check time axis breakpoints (−T, 0, +T) on PDF Page 8.',
+        text: 'Determine the Fourier Transform X(jω) of the triangular pulse plotted on Page 8 using the differentiation property.'
+      },
+      {
+        id: 'j22-q4-b',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 8,
+        hasDiagram: false,
+        text: 'Find the Fourier Transform of x(t) = e<sup>−a|t|</sup> (a > 0) and sketch its magnitude spectrum.'
+      },
+      {
+        id: 'j22-q5',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q5(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 8,
+        hasDiagram: false,
+        text: '(a) List all properties of the Region of Convergence (ROC) of the bilateral Laplace Transform. (b) Find the inverse Laplace transform of X(s) = (2s + 5) / [(s + 1)(s + 3)] for different possible ROCs (Re(s) > −1, −3 < Re(s) < −1, Re(s) < −3).'
+      },
+      {
+        id: 'j22-q6',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q6(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 9,
+        hasDiagram: false,
+        text: '(a) Define Z-transform and explain the significance of its ROC for causal and stable discrete-time LTI systems. (b) Find the Z-transform of x[n] = n a<sup>n</sup>u[n] using the differentiation-in-z property.'
+      },
+      {
+        id: 'j22-q7',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q7(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 9,
+        hasDiagram: false,
+        text: '(a) Derive the expression for the spectrum of a naturally/ideally sampled signal and explain ideal low-pass reconstruction. (b) Explain First-Order Hold (FOH) interpolation and its frequency response.'
+      },
+      {
+        id: 'j22-q8',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q8(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 9,
+        hasDiagram: false,
+        text: '(a) Obtain the impulse response h[n] and step response s[n] of a discrete-time LTI system characterized by H(z) = (1 − z<sup>−1</sup>) / (1 − 0.7 z<sup>−1</sup> + 0.1 z<sup>−2</sup>). (b) Check system stability.'
+      },
+      {
+        id: 'j22-q9',
+        paper: 'July-22-00239',
+        subjectCode: 'EC-304',
+        qNum: 'Q9(a)–(g)',
+        marks: '14',
+        unit: 'UNIT_2',
+        page: 10,
+        hasDiagram: false,
+        text: 'Short-answer questions (Pg 10): (a) Orthogonal signals, (b) Dirichlet conditions, (c) Duality property of Fourier Transform, (d) Causal LTI system impulse response, (e) Poles & zeros in Laplace domain, (f) Anti-aliasing filter, (g) Relation between Z-transform and DTFT.'
+      },
+
+      // -------------------- PAPER 4: Sep-21-00035 (EC-304) [Pages 10-13] --------------------
+      {
+        id: 's21-q1-a',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(a)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 10,
+        hasDiagram: false,
+        text: 'Explain the classification of systems based on linearity, time-invariance, causality, invertibility, and stability with mathematical tests.'
+      },
+      {
+        id: 's21-q1-b',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(b)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 11,
+        hasDiagram: false,
+        text: 'Sketch the transformed signals x(2t − 3) and x(−t/2 + 1) for a given piecewise-linear continuous-time signal x(t).'
+      },
+      {
+        id: 's21-q2-a',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 11,
+        hasDiagram: false,
+        text: 'Prove the convolution property and frequency-differentiation property of the Continuous-Time Fourier Transform.'
+      },
+      {
+        id: 's21-q2-b',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 11,
+        hasDiagram: false,
+        text: 'Find the Fourier Transform of x(t) = cos(ω₀t) and x(t) = e<sup>−at</sup> sin(ω₀t) u(t).'
+      },
+      {
+        id: 's21-q3-a',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(a)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 11,
+        hasDiagram: false,
+        text: 'Explain the impulse response representation of LTI systems and derive the discrete-time convolution sum.'
+      },
+      {
+        id: 's21-q3-b',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(b)',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 11,
+        hasDiagram: false,
+        text: 'Determine the total response (zero-input + zero-state response) of a continuous-time system governed by dy/dt + 3y(t) = x(t) for x(t) = u(t) and y(0⁻) = 2.'
+      },
+      {
+        id: 's21-q4',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 12,
+        hasDiagram: false,
+        text: '(a) Find the bilateral Laplace Transform and ROC of x(t) = e<sup>−b|t|</sup>. (b) State and prove the time-convolution and s-domain shifting theorems of the Laplace Transform.'
+      },
+      {
+        id: 's21-q5',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q5(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 12,
+        hasDiagram: false,
+        text: '(a) Compare unilateral and bilateral Z-transforms. (b) Find the inverse Z-transform of X(z) = (1 + 2z<sup>−1</sup>) / (1 − 1.5 z<sup>−1</sup> + 0.5 z<sup>−2</sup>) using residue theorem / partial fractions.'
+      },
+      {
+        id: 's21-q6',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q6(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 12,
+        hasDiagram: false,
+        text: '(a) Explain Nyquist-Shannon Sampling Theorem for low-pass signals and calculate Nyquist rate for sinc²(200t). (b) Discuss effects of under-sampling and practical anti-aliasing filters.'
+      },
+      {
+        id: 's21-q7',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q7(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 13,
+        hasDiagram: false,
+        text: '(a) Analyze a discrete-time LTI system in the Z-domain and determine stability from pole locations inside the unit circle. (b) Convert a continuous-time system H(s) = 1 / (s + a) to an equivalent discrete-time system.'
+      },
+      {
+        id: 's21-q8',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q8(a)–(b)',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 13,
+        hasDiagram: false,
+        text: 'Legacy CBCS Topic: (a) Obtain the state-space representation (A, B, C, D matrices) of a second-order LTI system. (b) Compute the state-transition matrix Φ(t) = e<sup>At</sup> [Out of Syllabus for ECEPC-313].'
+      },
+      {
+        id: 's21-q9',
+        paper: 'Sep-21-00035',
+        subjectCode: 'EC-304',
+        qNum: 'Q9(a)–(g)',
+        marks: '14',
+        unit: 'UNIT_1',
+        page: 13,
+        hasDiagram: false,
+        text: 'Short-answer questions (Pg 13): (a) Energy vs. power signals, (b) Unit ramp & unit doublet, (c) Gibbs phenomenon in Fourier series, (d) System function H(s), (e) Unit circle in Z-plane, (f) Zero-order hold circuit, (g) Memoryless system.'
+      },
+
+      // -------------------- PAPER 5: 16100(D) (EC-304 • Sem 3) [Pages 14-17] --------------------
+      {
+        id: 'p16100-q1-a',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(a)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 14,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 14): Piecewise continuous-time signal x(t) for amplitude & time-scaling/shifting sketch',
+        scanNote: 'Verify time instants (−2, 0, +2, +4) and amplitude values on PDF Page 14.',
+        text: 'For the continuous-time signal x(t) depicted on Page 14, sketch x(2t + 1) and x(−t + 2) and compute its total energy.'
+      },
+      {
+        id: 'p16100-q1-b',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q1(b)',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 14,
+        hasDiagram: false,
+        text: 'Determine whether the following systems are static/dynamic, linear/non-linear, time-invariant/time-varying, and causal/non-causal: (i) y(t) = cos(x(t)), (ii) y[n] = x[2n].'
+      },
+      {
+        id: 'p16100-q2-a',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(a)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 14,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 14): Periodic square / pulse train waveform for Complex Exponential Fourier Series',
+        scanNote: 'Check duty cycle T₀/T and DC offset on PDF Page 14.',
+        text: 'Find the Complex Exponential Fourier Series coefficients c<sub>n</sub> for the periodic pulse train shown on Page 14 and draw its two-sided line spectrum.'
+      },
+      {
+        id: 'p16100-q2-b',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q2(b)',
+        marks: '7',
+        unit: 'UNIT_2',
+        page: 15,
+        hasDiagram: false,
+        text: 'State Dirichlet’s conditions and prove the symmetry properties of Fourier series for even, odd, and half-wave symmetric periodic signals.'
+      },
+      {
+        id: 'p16100-q3',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q3(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_2',
+        page: 15,
+        hasDiagram: false,
+        text: '(a) Derive the Fourier Transform of the signum function sgn(t) and hence deduce the Fourier Transform of the unit step u(t). (b) State and prove the modulation theorem.'
+      },
+      {
+        id: 'p16100-q4',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q4(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 15,
+        hasDiagram: false,
+        text: '(a) Evaluate the convolution sum y[n] = (0.5)<sup>n</sup>u[n] * (0.25)<sup>n</sup>u[n]. (b) Prove that a discrete-time LTI system is BIBO stable if and only if its impulse response is absolutely summable (∑ |h[n]| < ∞).'
+      },
+      {
+        id: 'p16100-q5',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q5(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 16,
+        hasDiagram: false,
+        text: '(a) Using Laplace Transform, solve the differential equation d²y/dt² + 4 dy/dt + 3 y(t) = e<sup>−2t</sup>u(t) with initial conditions y(0⁻) = 1, y′(0⁻) = −1. (b) Sketch the pole-zero plot and ROC.'
+      },
+      {
+        id: 'p16100-q6',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q6(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 16,
+        hasDiagram: false,
+        text: '(a) State and prove the initial value and final value theorems of the Z-transform. (b) Find the Z-transform and ROC of x[n] = cos(ω₀n)u[n].'
+      },
+      {
+        id: 'p16100-q7',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q7(a)–(b)',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 16,
+        hasDiagram: false,
+        text: '(a) State and prove the Sampling Theorem in the frequency domain. (b) Explain aliasing in time and frequency domains and derive the reconstruction formula using an ideal interpolator.'
+      },
+      {
+        id: 'p16100-q8',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q8(a)–(b)',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 17,
+        hasDiagram: false,
+        text: 'Legacy CBCS Topic: (a) Obtain controllable canonical and observable canonical state-variable models for H(s) = (s + 2)/(s² + 3s + 2). (b) Define controllability and observability [Out of Syllabus for ECEPC-313].'
+      },
+      {
+        id: 'p16100-q9',
+        paper: '16100(D)',
+        subjectCode: 'EC-304',
+        qNum: 'Q9(i)–(x)',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 17,
+        hasDiagram: false,
+        text: '10 Short Questions (Pg 17): (i) Periodic signal condition, (ii) Causal system, (iii) Complex Fourier spectrum, (iv) FT of δ(t), (v) Laplace ROC of right-sided signal, (vi) Impulse invariance, (vii) Nyquist rate, (viii) ZOH distortion, (ix) Pole-zero stability, (x) State transition matrix [OOS].'
+      },
+
+      // -------------------- PAPER 6: EE-223 Paper Set (Sem 4 • Signals & Systems) [Pages 18-25] --------------------
+      // Verified & split: Syllabus-aligned questions mapped to ECEPC-313 Units I-IV; Non-ECEPC-313 topics mapped to OUT_OF_SYLLABUS
+      {
+        id: 'ee223-p18-q1a',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q1(a) [Pg 18]',
+        marks: '7',
+        unit: 'UNIT_1',
+        page: 18,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit I] Distinguish between memory (dynamic) and memoryless (static) systems, and test whether y(t) = x(t − 2) + 3x(t) and y[n] = x²[n] are memoryless, linear, and time-invariant.'
+      },
+      {
+        id: 'ee223-p18-q1b',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q1(b) [Pg 18]',
+        marks: '7',
+        unit: 'UNIT_3',
+        page: 18,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit III] Derive and evaluate the continuous-time convolution integral y(t) = ∫<sub>−∞</sub><sup>∞</sup> x(τ)h(t − τ) dτ for an LTI system with x(t) = e<sup>−t</sup>u(t) and h(t) = e<sup>−2t</sup>u(t).'
+      },
+      {
+        id: 'ee223-p18-q2',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q2(a)–(b) [Pg 18]',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 18,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Out of Syllabus for ECEPC-313] Formulate the state-space equations ẋ(t) = Ax(t) + Bu(t), y(t) = Cx(t) + Du(t) for an electrical RLC network and determine its transfer function H(s) = C(sI − A)<sup>−1</sup>B + D.'
+      },
+      {
+        id: 'ee223-p19-q3',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q3(a)–(b) [Pg 19]',
+        marks: '14',
+        unit: 'UNIT_2',
+        page: 19,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 19): Periodic rectangular pulse waveform for Fourier Series & Spectrum',
+        scanNote: 'Verify pulse amplitude A, pulse width τ, and period T directly on PDF Page 19.',
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit II] Determine the Trigonometric and Exponential Fourier Series coefficients for the periodic rectangular waveform shown on Page 19 and plot its amplitude spectrum.'
+      },
+      {
+        id: 'ee223-p19-q4',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q4(a)–(b) [Pg 19]',
+        marks: '14',
+        unit: 'UNIT_2',
+        page: 19,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit II] State and prove the convolution in time and frequency-shifting properties of the Continuous-Time Fourier Transform, and find the FT of x(t) = e<sup>−at</sup> cos(ω₀t)u(t).'
+      },
+      {
+        id: 'ee223-p20-q5',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q5(a)–(b) [Pg 20]',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 20,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit III] Determine the unilateral Laplace transform of standard causal waveforms and analyze the stability & transient response of a continuous-time LTI system from its s-plane poles and zeros.'
+      },
+      {
+        id: 'ee223-p20-q6',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q6(a)–(b) [Pg 20]',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 20,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit IV] Find the Z-transform and ROC of causal and anti-causal exponential sequences and determine the inverse Z-transform using partial fraction expansion.'
+      },
+      {
+        id: 'ee223-p21-q7',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q7(a)–(b) [Pg 21]',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 21,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 21): 8-point Radix-2 Decimation-in-Time (DIT) FFT butterfly flowgraph',
+        text: '[EE-223 Sem 4 • Out of Syllabus for ECEPC-313] Derive the 8-point Radix-2 Decimation-in-Time (DIT) Fast Fourier Transform (FFT) algorithm, draw its complete butterfly signal-flow diagram (Page 21), and compare computational complexity with direct DFT.'
+      },
+      {
+        id: 'ee223-p21-q8',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Q8(a)–(b) [Pg 21]',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 21,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 21): Direct Form-I and Direct Form-II IIR digital filter realization structures',
+        text: '[EE-223 Sem 4 • Out of Syllabus for ECEPC-313] Design a digital Butterworth low-pass IIR filter using Bilinear Transformation and draw its Direct Form-I and Direct Form-II realization structures.'
+      },
+      {
+        id: 'ee223-p22-q1',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Paper 2 • Q1–Q2 [Pg 22]',
+        marks: '14',
+        unit: 'UNIT_1',
+        page: 22,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 22): Continuous-time signal waveforms for odd/even decomposition & periodicity test',
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit I] Classify continuous-time and discrete-time signals (periodic, energy, power, even/odd) shown on Page 22 and test given systems for linearity, causality, and time-invariance.'
+      },
+      {
+        id: 'ee223-p23-q3',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Paper 2 • Q3–Q4 [Pg 23]',
+        marks: '14',
+        unit: 'UNIT_4',
+        page: 23,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit IV] State and prove the Sampling Theorem for low-pass band-limited signals, explain spectral folding (aliasing), and determine the Nyquist sampling rate for composite sinusoidal signals.'
+      },
+      {
+        id: 'ee223-p24-q5',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Paper 2 • Q5–Q7 [Pg 24]',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 24,
+        hasDiagram: true,
+        diagramLabel: 'Fig. (Page 24): State-variable block diagram & Kalman controllability/observability matrices',
+        text: '[EE-223 Sem 4 • Out of Syllabus for ECEPC-313] Test the controllability and observability of a multi-variable LTI system given in state-space form on Page 24 and compute its state-transition matrix via Laplace transform.'
+      },
+      {
+        id: 'ee223-p25-q8',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Paper 2 • Q8 [Pg 25]',
+        marks: '14',
+        unit: 'UNIT_3',
+        page: 25,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Mapped to ECEPC-313 Unit III] Compute the linear convolution of two finite-duration discrete-time sequences x[n] and h[n] using graphical/tabular convolution sum method and verify causality and BIBO stability.'
+      },
+      {
+        id: 'ee223-p25-q9',
+        paper: 'EE-223-Set',
+        subjectCode: 'EE-223 (Sem 4)',
+        qNum: 'Paper 2 • Q9 [Pg 25]',
+        marks: '14',
+        unit: 'OUT_OF_SYLLABUS',
+        page: 25,
+        hasDiagram: false,
+        text: '[EE-223 Sem 4 • Out of Syllabus for ECEPC-313] Short questions (Pg 25): (a) Circular vs. linear convolution via DFT, (b) Twiddle factor W<sub>N</sub> symmetry & periodicity, (c) Windowing in FIR filter design (Hamming/Hanning), (d) Eigenvalues of state matrix A.'
+      }
+    ];
+
+    // =========================================================================
+    // 3. APPLICATION STATE
+    // =========================================================================
+    let state = {
+      activeUnit: 'ALL',
+      selectedPaper: 'ALL',
+      searchQuery: '',
+      diagramOnly: false,
+      focusMode: false,
+      focusIndex: 0,
+      solvedIds: new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.SOLVED) || '[]')),
+      notes: JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || '{}'),
+      pdfInverted: localStorage.getItem(STORAGE_KEYS.PDF_INVERT) === 'true',
+      pdfDoc: null,
+      pdfFileName: '',
+      currentPage: 1,
+      totalPages: 25,
+      zoomScale: 1.15,
+      pendingTargetPage: null,
+      pendingQuestion: null,
+      isRendering: false,
+      queuedPage: null
+    };
+
+    // =========================================================================
+    // 4. DOM REFERENCES
+    // =========================================================================
+    const unitTabsContainer = document.getElementById('unitTabsContainer');
+    const listViewContainer = document.getElementById('list-view-container');
+    const focusViewContainer = document.getElementById('focus-view-container');
+    const questionsList = document.getElementById('questionsList');
+    const emptyState = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const paperSelect = document.getElementById('paperSelect');
+    const diagramOnlyToggle = document.getElementById('diagramOnlyToggle');
+    const unitDescriptionText = document.getElementById('unitDescriptionText');
+    const resultCountBadge = document.getElementById('resultCountBadge');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+
+    // PDF Viewer DOM
+    const pdfFileInput = document.getElementById('pdfFileInput');
+    const pdfViewerPane = document.getElementById('pdfViewerPane');
+    const questionsColumn = document.getElementById('questionsColumn');
+    const pdfCanvas = document.getElementById('pdfCanvas');
+    const pdfCanvasContainer = document.getElementById('pdfCanvasContainer');
+    const pdfPaneEmptyPlaceholder = document.getElementById('pdfPaneEmptyPlaceholder');
+    const pageNumberInput = document.getElementById('pageNumberInput');
+    const totalPagesSpan = document.getElementById('totalPagesSpan');
+    const zoomLevelLabel = document.getElementById('zoomLevelLabel');
+    const activeQuestionContextBar = document.getElementById('activeQuestionContextBar');
+    const viewerActivePaperBadge = document.getElementById('viewerActivePaperBadge');
+    const viewerActiveQNumBadge = document.getElementById('viewerActiveQNumBadge');
+    const viewerActiveQSummary = document.getElementById('viewerActiveQSummary');
+    const uploadPromptModal = document.getElementById('uploadPromptModal');
+    const modalTargetPageText = document.getElementById('modalTargetPageText');
+    const modalTargetPageInline = document.getElementById('modalTargetPageInline');
+    const dropZoneOverlay = document.getElementById('dropZoneOverlay');
+
+    // =========================================================================
+    // 5. WARM PARCHMENT LIGHT / SEPIA CHARCOAL DARK THEME & MASTERY TRACKER
+    // =========================================================================
+    function initTheme() {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = saved ? saved === 'dark' : prefersDark;
+      applyTheme(isDark);
+      applyPdfInvertUI();
+    }
+
+    function applyTheme(isDark) {
+      const html = document.documentElement;
+      const sun = document.getElementById('icon-sun');
+      const moon = document.getElementById('icon-moon');
+      if (isDark) {
+        html.classList.add('dark');
+        sun.classList.remove('hidden');
+        moon.classList.add('hidden');
+        localStorage.setItem(STORAGE_KEYS.THEME, 'dark');
+      } else {
+        html.classList.remove('dark');
+        sun.classList.add('hidden');
+        moon.classList.remove('hidden');
+        localStorage.setItem(STORAGE_KEYS.THEME, 'light');
+      }
+    }
+
+    function applyPdfInvertUI() {
+      const btn = document.getElementById('pdfInvertBtn');
+      if (state.pdfInverted) {
+        pdfCanvas.classList.add('pdf-inverted');
+        btn.classList.add('badge-accent');
+      } else {
+        pdfCanvas.classList.remove('pdf-inverted');
+        btn.classList.remove('badge-accent');
+      }
+    }
+
+    function togglePdfInvert() {
+      state.pdfInverted = !state.pdfInverted;
+      localStorage.setItem(STORAGE_KEYS.PDF_INVERT, String(state.pdfInverted));
+      applyPdfInvertUI();
+    }
+
+    function saveSolved() {
+      localStorage.setItem(STORAGE_KEYS.SOLVED, JSON.stringify([...state.solvedIds]));
+      updateMasteryUI();
+    }
+
+    function saveNote(id, text) {
+      state.notes[id] = text;
+      localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(state.notes));
+    }
+
+    function updateMasteryUI() {
+      const total = PYQ_DATA.length;
+      const count = state.solvedIds.size;
+      const pct = Math.round((count / total) * 100);
+      document.getElementById('mastery-counter').textContent = `${count} / ${total}`;
+      document.getElementById('mastery-bar').style.width = `${pct}%`;
+    }
+
+    window.toggleSolved = function (id) {
+      if (state.solvedIds.has(id)) {
+        state.solvedIds.delete(id);
+      } else {
+        state.solvedIds.add(id);
+      }
+      saveSolved();
+      renderApp();
+    };
+
+    // =========================================================================
+    // 6. RENDER UNIT TABS WITH LIVE COUNTS
+    // =========================================================================
+    function renderUnitTabs() {
+      unitTabsContainer.innerHTML = UNITS.map(unit => {
+        const count = unit.id === 'ALL'
+          ? PYQ_DATA.length
+          : PYQ_DATA.filter(q => q.unit === unit.id).length;
+
+        const isActive = state.activeUnit === unit.id;
+        const isOOS = unit.id === 'OUT_OF_SYLLABUS';
+
+        let btnClasses = '';
+        let badgeClasses = '';
+
+        if (isActive) {
+          btnClasses = 'btn-accent border-transparent shadow-xs';
+          badgeClasses = 'bg-black/20 text-white dark:text-stone-900';
+        } else if (isOOS) {
+          btnClasses = 'badge-amber border border-warm hover:opacity-90';
+          badgeClasses = 'surface-elevated text-main';
+        } else {
+          btnClasses = 'btn-outline-warm';
+          badgeClasses = 'surface-secondary text-sub';
+        }
+
+        return `
+          <button
+            onclick="selectUnit('${unit.id}')"
+            class="shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${btnClasses}"
+          >
+            <span>${unit.shortLabel}</span>
+            <span class="px-1.5 py-0.5 rounded-md text-[11px] font-mono-code font-bold ${badgeClasses}">${count}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectUnit(unitId) {
+      state.activeUnit = unitId;
+      state.focusIndex = 0;
+      renderApp();
+    }
+
+    // =========================================================================
+    // 7. FILTER & RENDER QUESTION CARDS (LIST MODE + FOCUS MODE)
+    // =========================================================================
+    function getFilteredQuestions() {
+      const qLower = state.searchQuery.trim().toLowerCase();
+      return PYQ_DATA.filter(item => {
+        if (state.activeUnit !== 'ALL' && item.unit !== state.activeUnit) return false;
+        if (state.selectedPaper !== 'ALL' && item.paper !== state.selectedPaper) return false;
+        if (state.diagramOnly && !item.hasDiagram) return false;
+        if (qLower) {
+          const stripHtml = item.text.replace(/<[^>]*>/g, '');
+          const haystack = `${item.paper} ${item.subjectCode} ${item.qNum} ${stripHtml} ${item.diagramLabel || ''} page ${item.page}`.toLowerCase();
+          if (!haystack.includes(qLower)) return false;
+        }
+        return true;
+      });
+    }
+
+    function getUnitBadgeHtml(unitId) {
+      switch (unitId) {
+        case 'UNIT_1':
+          return `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold badge-sage">Unit I • Signals &amp; Systems</span>`;
+        case 'UNIT_2':
+          return `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold badge-accent">Unit II • Fourier Series &amp; FT</span>`;
+        case 'UNIT_3':
+          return `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold badge-sage">Unit III • LTI &amp; Laplace</span>`;
+        case 'UNIT_4':
+          return `<span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold badge-accent">Unit IV • Z-Transform &amp; Sampling</span>`;
+        case 'OUT_OF_SYLLABUS':
+          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold badge-amber">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            Out of Syllabus (EE-223 / Legacy)
+          </span>`;
+        default:
+          return '';
+      }
+    }
+
+    function renderListView() {
+      listViewContainer.classList.remove('hidden');
+      focusViewContainer.classList.add('hidden');
+
+      const filtered = getFilteredQuestions();
+      const unitObj = UNITS.find(u => u.id === state.activeUnit) || UNITS[0];
+      unitDescriptionText.textContent = unitObj.description;
+      resultCountBadge.textContent = `${filtered.length} Question${filtered.length === 1 ? '' : 's'}`;
+
+      const hasActiveFilters = state.activeUnit !== 'ALL' || state.selectedPaper !== 'ALL' || state.diagramOnly || state.searchQuery.trim() !== '';
+      resetFiltersBtn.classList.toggle('hidden', !hasActiveFilters);
+
+      // Update toggle switch visual accent
+      const track = document.getElementById('diagramToggleTrack');
+      if (track) {
+        track.style.backgroundColor = state.diagramOnly ? 'var(--accent)' : '';
+      }
+
+      if (filtered.length === 0) {
+        questionsList.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      questionsList.innerHTML = filtered.map(q => {
+        const isLatestNEP = q.paper === 'Dec-24-0096';
+        const isEE223 = q.paper === 'EE-223-Set';
+        const isSolved = state.solvedIds.has(q.id);
+
+        return `
+          <article id="card-${q.id}" class="surface-elevated rounded-2xl border border-warm p-4 sm:p-5 transition-all">
+            <!-- Top Metadata Row -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold font-mono-code badge-accent">
+                  ${q.qNum}
+                </span>
+                ${getUnitBadgeHtml(q.unit)}
+                ${isEE223 ? `
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold badge-amber border border-warm">
+                    EE-223 (Sem 4)
+                  </span>
+                ` : ''}
+                ${q.hasDiagram ? `
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold surface-secondary text-main border border-warm">
+                    <svg class="w-3 h-3" style="color: var(--accent);" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Has Diagram
+                  </span>
+                ` : ''}
+                ${isSolved ? `<span class="text-[11px] font-semibold px-2 py-0.5 rounded-full badge-sage">✓ Mastered</span>` : ''}
+              </div>
+
+              <div class="flex items-center gap-2 text-xs">
+                ${isLatestNEP ? `<span class="px-2 py-0.5 rounded badge-sage font-bold text-[10px] uppercase tracking-wider">NEP Latest</span>` : ''}
+                <span class="font-mono-code font-semibold text-sub surface-secondary border border-warm px-2 py-0.5 rounded-md">
+                  ${q.paper} (${q.subjectCode})
+                </span>
+                <span class="font-semibold text-muted-warm">
+                  [${q.marks}M]
+                </span>
+              </div>
+            </div>
+
+            <!-- Question Body -->
+            <p class="text-sm sm:text-[15px] text-main leading-relaxed font-medium mb-3">
+              ${q.text}
+            </p>
+
+            ${q.hasDiagram && q.diagramLabel ? `
+              <div class="mb-3.5 px-3 py-2 rounded-xl surface-secondary border border-warm flex flex-col gap-1 text-xs text-sub">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 shrink-0" style="color: var(--accent);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+                  </svg>
+                  <span><strong class="text-main">Waveform / Diagram:</strong> ${q.diagramLabel}</span>
+                </div>
+                ${q.scanNote ? `<span class="text-[11px] text-muted-warm pl-6">Scan Check Note: ${q.scanNote}</span>` : ''}
+              </div>
+            ` : ''}
+
+            <!-- Action Footer -->
+            <div class="pt-2.5 border-t border-warm flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-mono-code text-muted-warm">
+                PDF Reference: <strong class="text-main">Page ${q.page}</strong> of ${state.totalPages}
+              </span>
+
+              <div class="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onclick="openInFocus('${q.id}')"
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-medium btn-outline-warm cursor-pointer"
+                  title="Open this question in distraction-free Focus Mode"
+                >
+                  Focus
+                </button>
+                <button
+                  type="button"
+                  onclick="toggleSolved('${q.id}')"
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-medium btn-outline-warm cursor-pointer ${isSolved ? 'badge-sage' : ''}"
+                >
+                  ${isSolved ? '✓ Solved' : 'Mark Solved'}
+                </button>
+                <button
+                  type="button"
+                  onclick="openQuestionInPdf('${q.id}')"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    q.hasDiagram ? 'btn-accent shadow-xs' : 'btn-outline-warm'
+                  }"
+                >
+                  ${q.hasDiagram ? `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span>View Diagram (Page ${q.page})</span>
+                  ` : `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>View in PDF (Page ${q.page})</span>
+                  `}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 8. SINGLE-QUESTION DISTRACTION-FREE FOCUS MODE RENDERER
+    // =========================================================================
+    function renderFocusView() {
+      listViewContainer.classList.add('hidden');
+      focusViewContainer.classList.remove('hidden');
+
+      const filtered = getFilteredQuestions();
+      const pool = filtered.length > 0 ? filtered : PYQ_DATA;
+      if (state.focusIndex >= pool.length) state.focusIndex = 0;
+      if (state.focusIndex < 0) state.focusIndex = pool.length - 1;
+
+      const q = pool[state.focusIndex];
+      const isSolved = state.solvedIds.has(q.id);
+      const isLatestNEP = q.paper === 'Dec-24-0096';
+      const isEE223 = q.paper === 'EE-223-Set';
+      const savedNote = state.notes[q.id] || '';
+
+      const optionsHtml = pool
+        .map((item, idx) => {
+          const cleanStem = item.text.replace(/<[^>]*>/g, '').slice(0, 56);
+          const diagFlag = item.hasDiagram ? ' [Diagram]' : '';
+          return `<option value="${idx}" ${idx === state.focusIndex ? 'selected' : ''}>${item.paper} • ${item.qNum}${diagFlag} — ${cleanStem}...</option>`;
+        })
+        .join('');
+
+      focusViewContainer.innerHTML = `
+        <div class="max-w-4xl mx-auto">
+          <!-- Focus Mode Top Navigation Bar -->
+          <div class="p-3.5 mb-4 rounded-2xl surface-secondary border border-warm flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                onclick="stepFocus(-1)"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold btn-outline-warm cursor-pointer"
+              >
+                ← Previous
+              </button>
+              <span class="text-xs font-bold text-main px-2">
+                Question ${state.focusIndex + 1} of ${pool.length}
+              </span>
+              <button
+                type="button"
+                onclick="stepFocus(1)"
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold btn-outline-warm cursor-pointer"
+              >
+                Next →
+              </button>
+            </div>
+
+            <div class="flex-1 min-w-[210px] max-w-md">
+              <select
+                onchange="jumpFocus(this.value)"
+                aria-label="Jump to question"
+                class="w-full px-3 py-1.5 rounded-xl text-xs surface-elevated border border-warm text-main focus:outline-none"
+              >
+                ${optionsHtml}
+              </select>
+            </div>
+          </div>
+
+          <!-- Active Focus Question Card -->
+          <article class="p-5 sm:p-7 rounded-2xl surface-elevated border border-warm">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-mono-code text-xs font-bold px-2.5 py-1 rounded-lg badge-accent">
+                  ${q.qNum}
+                </span>
+                ${getUnitBadgeHtml(q.unit)}
+                ${isLatestNEP ? `<span class="px-2 py-0.5 rounded badge-sage font-bold text-[10px] uppercase tracking-wider">NEP Latest</span>` : ''}
+                ${isEE223 ? `<span class="px-2 py-0.5 rounded badge-amber font-bold text-[10px] uppercase tracking-wider border border-warm">EE-223 (Sem 4)</span>` : ''}
+                <span class="font-mono-code text-xs font-semibold px-2.5 py-1 rounded-lg surface-secondary text-sub border border-warm">
+                  ${q.paper} (${q.subjectCode}) • [${q.marks}M]
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onclick="toggleSolved('${q.id}')"
+                  class="px-3 py-1.5 rounded-xl text-xs font-semibold btn-outline-warm cursor-pointer ${isSolved ? 'badge-sage' : ''}"
+                >
+                  ${isSolved ? '✓ Mastered' : 'Mark Solved'}
+                </button>
+                <button
+                  type="button"
+                  onclick="openQuestionInPdf('${q.id}')"
+                  class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-semibold btn-accent cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>${q.hasDiagram ? `View Diagram (Page ${q.page})` : `View in PDF (Page ${q.page})`}</span>
+                </button>
+              </div>
+            </div>
+
+            <h2 class="text-base sm:text-lg font-bold text-main leading-relaxed mb-4">
+              ${q.text}
+            </h2>
+
+            ${q.hasDiagram && q.diagramLabel ? `
+              <div class="p-3.5 rounded-xl surface-secondary border border-warm flex flex-col gap-1 text-xs text-sub">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" style="color: var(--accent);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+                    </svg>
+                    <span><strong class="text-main">Waveform / Diagram:</strong> ${q.diagramLabel}</span>
+                  </div>
+                  <span class="font-mono-code font-bold text-main">PDF Page ${q.page}</span>
+                </div>
+                ${q.scanNote ? `<span class="text-[11px] text-muted-warm pl-6">Scan Check Note: ${q.scanNote}</span>` : ''}
+              </div>
+            ` : `
+              <div class="p-3 rounded-xl surface-secondary border border-warm flex items-center justify-between text-xs text-muted-warm">
+                <span>Text / Analytical Problem (No figure required)</span>
+                <span class="font-mono-code font-bold text-main">PDF Page ${q.page}</span>
+              </div>
+            `}
+          </article>
+
+          <!-- Auto-Saving Personal Scratchpad -->
+          <div class="mt-4 p-4 sm:p-5 rounded-2xl surface-secondary border border-warm">
+            <div class="flex items-center justify-between mb-2">
+              <label for="focus-scratchpad" class="text-xs font-bold uppercase tracking-wider text-sub">
+                Personal Scratchpad &amp; Transform Derivations (Auto-saved for ${q.paper} ${q.qNum})
+              </label>
+              <span id="note-saved-badge" class="text-[11px] text-muted-warm">Saved locally</span>
+            </div>
+            <textarea
+              id="focus-scratchpad"
+              rows="5"
+              oninput="handleNoteInput('${q.id}', this.value)"
+              placeholder="Write Fourier coefficients (a0, an, bn, cn), Laplace / Z-transform ROC conditions, convolution integrals, or Nyquist calculations here..."
+              class="w-full p-3 rounded-xl text-xs sm:text-sm font-mono-code surface-elevated border border-warm text-main placeholder:text-muted-warm focus:outline-none focus:border-warm-strong"
+            >${savedNote}</textarea>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderApp() {
+      renderUnitTabs();
+      updateMasteryUI();
+      if (state.focusMode) {
+        renderFocusView();
+      } else {
+        renderListView();
+      }
+    }
+
+    window.openInFocus = function (id) {
+      const filtered = getFilteredQuestions();
+      const pool = filtered.length > 0 ? filtered : PYQ_DATA;
+      const idx = pool.findIndex(item => item.id === id);
+      state.focusIndex = idx >= 0 ? idx : 0;
+      state.focusMode = true;
+      document.getElementById('focus-mode-label').textContent = 'Exit Focus';
+      renderApp();
+
+      // Auto-sync PDF viewer page if already open
+      const q = pool[state.focusIndex];
+      if (q && state.pdfDoc && !pdfViewerPane.classList.contains('hidden')) {
+        updateActiveQuestionBanner(q);
+        renderPdfPage(q.page, false);
+      }
+    };
+
+    window.stepFocus = function (delta) {
+      const filtered = getFilteredQuestions();
+      const pool = filtered.length > 0 ? filtered : PYQ_DATA;
+      state.focusIndex = (state.focusIndex + delta + pool.length) % pool.length;
+      renderFocusView();
+
+      const q = pool[state.focusIndex];
+      if (q && state.pdfDoc && !pdfViewerPane.classList.contains('hidden')) {
+        updateActiveQuestionBanner(q);
+        renderPdfPage(q.page, false);
+      }
+    };
+
+    window.jumpFocus = function (val) {
+      state.focusIndex = parseInt(val, 10) || 0;
+      renderFocusView();
+
+      const filtered = getFilteredQuestions();
+      const pool = filtered.length > 0 ? filtered : PYQ_DATA;
+      const q = pool[state.focusIndex];
+      if (q && state.pdfDoc && !pdfViewerPane.classList.contains('hidden')) {
+        updateActiveQuestionBanner(q);
+        renderPdfPage(q.page, false);
+      }
+    };
+
+    window.handleNoteInput = function (id, text) {
+      saveNote(id, text);
+      const badge = document.getElementById('note-saved-badge');
+      if (badge) {
+        badge.textContent = 'Saved ✓';
+        setTimeout(() => {
+          if (badge) badge.textContent = 'Saved locally';
+        }, 1200);
+      }
+    };
+
+    // =========================================================================
+    // 9. PDF.JS LOADING (GITHUB BACKEND AUTO-FETCH + MANUAL/DROP FALLBACK)
+    // =========================================================================
+    async function loadPdfFromArrayBuffer(arrayBuffer, fileName) {
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      state.pdfDoc = await loadingTask.promise;
+      state.pdfFileName = fileName;
+      state.totalPages = state.pdfDoc.numPages;
+
+      // Update UI indicators
+      totalPagesSpan.textContent = state.totalPages;
+      pageNumberInput.max = state.totalPages;
+      document.getElementById('uploadBtnText').textContent = 'Change PDF';
+      document.getElementById('welcomeUploadBanner').classList.add('hidden');
+
+      const statusBadge = document.getElementById('pdfStatusBadge');
+      statusBadge.className = 'hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl badge-sage border border-warm text-xs font-semibold';
+      statusBadge.innerHTML = `
+        <span class="w-2 h-2 rounded-full" style="background-color: var(--sage);"></span>
+        <span class="max-w-[185px] truncate" title="${fileName}">${fileName} (${state.totalPages}p)</span>
+      `;
+
+      pdfPaneEmptyPlaceholder.classList.add('hidden');
+      pdfCanvas.classList.remove('hidden');
+      applyPdfInvertUI();
+      closeUploadModal();
+
+      // Jump to pending page if user clicked a question before loading, else Page 1
+      const targetPage = state.pendingTargetPage || state.currentPage || 1;
+      state.pendingTargetPage = null;
+
+      if (!pdfViewerPane.classList.contains('hidden')) {
+        await renderPdfPage(targetPage, true);
+      } else if (targetPage !== 1) {
+        showPdfPane();
+        await renderPdfPage(targetPage, true);
+      }
+    }
+
+    async function loadPdfFile(file) {
+      if (!file || file.type !== 'application/pdf') return;
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        await loadPdfFromArrayBuffer(arrayBuffer, file.name);
+      } catch (err) {
+        console.error('Error loading local PDF:', err);
+      }
+    }
+
+    async function autoLoadRepoPdf() {
+      const statusBadge = document.getElementById('pdfStatusBadge');
+      try {
+        const response = await fetch(encodeURI('./' + REPO_PDF_FILENAME));
+        if (!response.ok) throw new Error('Repo PDF not found via HTTP');
+        const arrayBuffer = await response.arrayBuffer();
+        await loadPdfFromArrayBuffer(arrayBuffer, REPO_PDF_FILENAME);
+      } catch (err) {
+        // Fallback cleanly when opened locally via file:// or before pushing PDF to GitHub
+        statusBadge.className = 'hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl badge-amber border border-warm text-xs font-semibold';
+        statusBadge.innerHTML = `
+          <span class="w-2 h-2 rounded-full animate-pulse" style="background-color: var(--amber);"></span>
+          <span>PDF not loaded</span>
+        `;
+        document.getElementById('welcomeUploadBanner').classList.remove('hidden');
+      }
+    }
+
+    async function renderPdfPage(pageNum, autoFit = false) {
+      if (!state.pdfDoc) return;
+
+      const clampedPage = Math.max(1, Math.min(pageNum, state.totalPages));
+      state.currentPage = clampedPage;
+      pageNumberInput.value = clampedPage;
+
+      document.getElementById('prevPageBtn').disabled = clampedPage <= 1;
+      document.getElementById('nextPageBtn').disabled = clampedPage >= state.totalPages;
+
+      if (state.isRendering) {
+        state.queuedPage = clampedPage;
+        return;
+      }
+
+      state.isRendering = true;
+      try {
+        const page = await state.pdfDoc.getPage(clampedPage);
+
+        // Calculate fit-to-container scale on initial open or Fit click
+        if (autoFit) {
+          const containerWidth = Math.max(300, pdfCanvasContainer.clientWidth - 36);
+          const unscaledViewport = page.getViewport({ scale: 1 });
+          state.zoomScale = Math.min(1.65, Math.max(0.6, containerWidth / unscaledViewport.width));
+        }
+
+        const outputScale = window.devicePixelRatio || 1;
+        const viewport = page.getViewport({ scale: state.zoomScale });
+
+        pdfCanvas.width = Math.floor(viewport.width * outputScale);
+        pdfCanvas.height = Math.floor(viewport.height * outputScale);
+        pdfCanvas.style.width = `${Math.floor(viewport.width)}px`;
+        pdfCanvas.style.height = `${Math.floor(viewport.height)}px`;
+
+        zoomLevelLabel.textContent = `${Math.round(state.zoomScale * 100)}%`;
+
+        const ctx = pdfCanvas.getContext('2d');
+        const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+
+        await page.render({
+          canvasContext: ctx,
+          transform: transform,
+          viewport: viewport
+        }).promise;
+
+        pdfCanvasContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error('PDF render error:', err);
+      } finally {
+        state.isRendering = false;
+        if (state.queuedPage !== null) {
+          const next = state.queuedPage;
+          state.queuedPage = null;
+          renderPdfPage(next, false);
+        }
+      }
+    }
+
+    function openQuestionInPdf(questionId) {
+      const q = PYQ_DATA.find(item => item.id === questionId);
+      if (!q) return;
+
+      state.pendingQuestion = q;
+      updateActiveQuestionBanner(q);
+
+      if (!state.pdfDoc) {
+        state.pendingTargetPage = q.page;
+        modalTargetPageText.textContent = `Target: ${q.paper} (${q.qNum}) • Page ${q.page}`;
+        modalTargetPageInline.textContent = `Page ${q.page}`;
+        uploadPromptModal.classList.remove('hidden');
+        uploadPromptModal.classList.add('flex');
+        return;
+      }
+
+      showPdfPane();
+      renderPdfPage(q.page, true);
+    }
+
+    function updateActiveQuestionBanner(q) {
+      if (!q) return;
+      const stripHtml = q.text.replace(/<[^>]*>/g, '');
+      activeQuestionContextBar.classList.remove('hidden');
+      viewerActivePaperBadge.textContent = `${q.paper} (${q.subjectCode})`;
+      viewerActiveQNumBadge.textContent = `${q.qNum} • Page ${q.page}`;
+      viewerActiveQSummary.textContent = q.diagramLabel ? `${q.diagramLabel} — ${stripHtml}` : stripHtml;
+    }
+
+    function showPdfPane() {
+      pdfViewerPane.classList.remove('hidden');
+      pdfViewerPane.classList.add('flex');
+      questionsColumn.classList.add('lg:w-[52%]', 'xl:w-[50%]');
+      document.getElementById('toggleViewerLabel').textContent = 'Hide PDF Pane';
+    }
+
+    function closePdfPane() {
+      pdfViewerPane.classList.add('hidden');
+      pdfViewerPane.classList.remove('flex');
+      questionsColumn.classList.remove('lg:w-[52%]', 'xl:w-[50%]');
+      document.getElementById('toggleViewerLabel').textContent = 'Show PDF Pane';
+    }
+
+    function togglePdfPane() {
+      if (pdfViewerPane.classList.contains('hidden')) {
+        showPdfPane();
+        if (state.pdfDoc) renderPdfPage(state.currentPage, true);
+      } else {
+        closePdfPane();
+      }
+    }
+
+    function changePdfPage(delta) {
+      if (!state.pdfDoc) return;
+      renderPdfPage(state.currentPage + delta, false);
+    }
+
+    function adjustZoom(delta) {
+      if (!state.pdfDoc) return;
+      state.zoomScale = Math.min(2.6, Math.max(0.5, +(state.zoomScale + delta).toFixed(2)));
+      renderPdfPage(state.currentPage, false);
+    }
+
+    function fitPdfWidth() {
+      if (!state.pdfDoc) return;
+      renderPdfPage(state.currentPage, true);
+    }
+
+    function closeUploadModal() {
+      uploadPromptModal.classList.add('hidden');
+      uploadPromptModal.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // 10. FILTER, FOCUS SHORTCUTS & DRAG-AND-DROP EVENT LISTENERS
+    // =========================================================================
+    searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      state.focusIndex = 0;
+      clearSearchBtn.classList.toggle('hidden', state.searchQuery.length === 0);
+      renderApp();
+    });
+
+    function clearSearch() {
+      state.searchQuery = '';
+      state.focusIndex = 0;
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      renderApp();
+    }
+
+    paperSelect.addEventListener('change', (e) => {
+      state.selectedPaper = e.target.value;
+      state.focusIndex = 0;
+      renderApp();
+    });
+
+    diagramOnlyToggle.addEventListener('change', (e) => {
+      state.diagramOnly = e.target.checked;
+      state.focusIndex = 0;
+      renderApp();
+    });
+
+    function resetAllFilters() {
+      state.activeUnit = 'ALL';
+      state.selectedPaper = 'ALL';
+      state.searchQuery = '';
+      state.diagramOnly = false;
+      state.focusIndex = 0;
+      searchInput.value = '';
+      paperSelect.value = 'ALL';
+      diagramOnlyToggle.checked = false;
+      clearSearchBtn.classList.add('hidden');
+      renderApp();
+    }
+
+    pdfFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        loadPdfFile(e.target.files[0]);
+      }
+    });
+
+    pageNumberInput.addEventListener('change', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (!isNaN(val) && state.pdfDoc) {
+        renderPdfPage(val, false);
+      }
+    });
+
+    document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(!isDark);
+    });
+
+    document.getElementById('btn-focus-mode').addEventListener('click', () => {
+      state.focusMode = !state.focusMode;
+      document.getElementById('focus-mode-label').textContent = state.focusMode ? 'Exit Focus' : 'Focus Mode';
+      renderApp();
+    });
+
+    // Keyboard shortcuts in Focus Mode (Left/Right arrows & Spacebar to open diagram in PDF)
+    document.addEventListener('keydown', (e) => {
+      if (!state.focusMode) return;
+      const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (tag === 'textarea' || tag === 'input' || tag === 'select') return;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        stepFocus(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        stepFocus(-1);
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        const filtered = getFilteredQuestions();
+        const pool = filtered.length > 0 ? filtered : PYQ_DATA;
+        if (pool[state.focusIndex]) {
+          openQuestionInPdf(pool[state.focusIndex].id);
+        }
+      }
+    });
+
+    // Global Drag & Drop Support for PDF
+    let dragCounter = 0;
+    window.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dragCounter++;
+      dropZoneOverlay.classList.remove('hidden');
+      dropZoneOverlay.classList.add('flex');
+    });
+
+    window.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        dropZoneOverlay.classList.add('hidden');
+        dropZoneOverlay.classList.remove('flex');
+      }
+    });
+
+    window.addEventListener('dragover', (e) => e.preventDefault());
+
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      dropZoneOverlay.classList.add('hidden');
+      dropZoneOverlay.classList.remove('flex');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPdfFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Initialize Theme, UI & Auto-Fetch GitHub Repo PDF on Load
+    initTheme();
+    renderApp();
+    autoLoadRepoPdf();
+  </script>
+</body>
+</html>
